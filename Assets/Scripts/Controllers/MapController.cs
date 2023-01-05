@@ -9,69 +9,76 @@ namespace Controllers
 {
     public class MapController : MonoBehaviour
     {
-        [SerializeField] private TilePrefab _tilePrefab;
-        [SerializeField] private Transform _tilesContainer;
+        private const float StartVertex = -0.5f;
 
-        [SerializeField] private Material _waterMaterial;
+        [SerializeField] private TerrainPrefab _terrain;
+
         [SerializeField] private Material _landMaterial;
-
-        private Dictionary<Vector2Int, TilePrefab> _tilePrefabs;
 
         public void UpdateMap(List<Tile> mapTiles)
         {
-            if (_tilePrefabs == null)
-            {
-                _tilePrefabs = new Dictionary<Vector2Int, TilePrefab>();
-                CreateTiles(mapTiles);
-            }
-            else
-            {
-                UpdateTiles(mapTiles);
-            }
+            _terrain.InitMeshComponents();
 
-            CombineTileMeshes();
+            CreateTerrain(mapTiles);
         }
 
-        private void CreateTiles(List<Tile> mapTiles)
+        private void CreateTerrain(List<Tile> mapTiles)
         {
+            var vertices = new List<Vector3>();
+            var uvs = new List<Vector2>();
+            var triangles = new List<int>();
+            var normals = new List<Vector3>();
+
             foreach (Tile mapTile in mapTiles)
             {
-                TilePrefab tilePrefab = InstantiateTile(mapTile.Position.x, mapTile.Position.y);
-                UpdateTileMaterial(tilePrefab, mapTile.TileType);
-                _tilePrefabs.Add(mapTile.Position, tilePrefab);
+                int vertexIndex = vertices.Count;
+
+                Vector3 leftBottomVertex = new Vector3(
+                    StartVertex + mapTile.Position.x,
+                    GetTileHeight(mapTile),
+                    StartVertex + mapTile.Position.y);
+                Vector3 leftTopVertex = leftBottomVertex + Vector3.forward;
+                Vector3 rightTopVertex = leftTopVertex + Vector3.right;
+                Vector3 rightBottomVertex = leftBottomVertex + Vector3.right;
+                var tileVertices = new Vector3[] { leftBottomVertex, leftTopVertex, rightTopVertex, rightBottomVertex };
+                vertices.AddRange(tileVertices);
+
+                Vector2 uv = GetMapTileUV(mapTile);
+                for (var tileVertex = 0; tileVertex < tileVertices.Length; tileVertex++)
+                {
+                    uvs.Add(uv);
+                    normals.Add(Vector3.up);
+                }
+
+                triangles.Add(vertexIndex);
+                triangles.Add(vertexIndex + 1);
+                triangles.Add(vertexIndex + 2);
+                triangles.Add(vertexIndex);
+                triangles.Add(vertexIndex + 2);
+                triangles.Add(vertexIndex + 3);
             }
+
+            _terrain.InitMesh(vertices, triangles, uvs, normals, _landMaterial);
         }
 
-        private void UpdateTiles(List<Tile> mapTiles)
+        private float GetTileHeight(Tile mapTile)
         {
-            foreach (Tile mapTile in mapTiles)
+            return mapTile.TileType switch
             {
-                TilePrefab tilePrefab = _tilePrefabs[mapTile.Position];
-                UpdateTileMaterial(tilePrefab, mapTile.TileType);
-            }
-        }
-
-        private void CombineTileMeshes()
-        {
-            StaticBatchingUtility.Combine(_tilesContainer.gameObject);
-        }
-
-        private void UpdateTileMaterial(TilePrefab tilePrefab, TileType tileType)
-        {
-            Material tileMaterial = tileType switch
-            {
-                TileType.Land => _landMaterial,
-                TileType.Water => _waterMaterial,
-                _ => throw new ArgumentOutOfRangeException(nameof(tileType), tileType, null)
+                TileType.Land => Constants.TerrainPositionY,
+                TileType.Water => Constants.TerrainWaterPositionY,
+                _ => throw new ArgumentOutOfRangeException(),
             };
-
-            tilePrefab.MeshRendererSharedMaterial = tileMaterial;
         }
 
-        private TilePrefab InstantiateTile(int positionX, int positionY)
+        private Vector2 GetMapTileUV(Tile mapTile)
         {
-            var position = new Vector3(positionX, Constants.TerrainPositionY, positionY);
-            return Instantiate(_tilePrefab, position, Quaternion.identity, _tilesContainer);
+            return mapTile.TileType switch
+            {
+                TileType.Land => new Vector2(1, 1),
+                TileType.Water => new Vector2(0, 0),
+                _ => throw new ArgumentOutOfRangeException(),
+            };
         }
     }
 }
