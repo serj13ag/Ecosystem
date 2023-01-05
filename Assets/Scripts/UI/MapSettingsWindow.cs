@@ -1,3 +1,4 @@
+using Controllers;
 using Data;
 using Services;
 using TMPro;
@@ -7,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace UI
 {
-    public class MapSettings : MonoBehaviour
+    public class MapSettingsWindow : MonoBehaviour
     {
         [SerializeField] private TMP_InputField _seedInputField;
         [SerializeField] private Button _seedRandomize;
@@ -21,6 +22,7 @@ namespace UI
         [SerializeField] private Button _generateMap;
 
         private MainController _mainController;
+
         private int _seed;
 
         private int Seed
@@ -38,22 +40,18 @@ namespace UI
         {
             _mainController = mainController;
 
-            if (localStorageService.TryLoad<MapSettingsData>(Constants.MapSettingsKey, out var mapSettingsData))
+            if (localStorageService.TryLoad(Constants.MapSettingsKey, out MapSettingsData mapSettingsData))
             {
                 Seed = mapSettingsData.Seed;
-
                 _refinement.value = mapSettingsData.Refinement;
                 _waterLevel.value = mapSettingsData.WaterLevel;
-
                 _treesPercentage.value = mapSettingsData.TreesPercentage;
             }
             else
             {
                 Seed = Constants.DefaultSeed;
-
                 _refinement.value = Constants.RefinementDefaultValue;
                 _waterLevel.value = Constants.WaterLevelDefaultValue;
-
                 _treesPercentage.value = Constants.TreesPercentageDefaultValue;
             }
         }
@@ -65,17 +63,17 @@ namespace UI
             _generateMap.onClick.AddListener(OnGenerateMapButtonClick);
         }
 
-        private void OnGenerateMapButtonClick()
-        {
-            UpdateMap();
-        }
-
         private void OnSeedRandomizeButtonClick()
         {
             Seed = Random.Range(0, Constants.MaxSeedValue);
         }
 
         private void OnTreesRandomizePositionsButtonClick()
+        {
+            UpdateMap();
+        }
+
+        private void OnGenerateMapButtonClick()
         {
             UpdateMap();
         }

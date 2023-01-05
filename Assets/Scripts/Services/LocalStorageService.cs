@@ -4,19 +4,19 @@ namespace Services
 {
     public class LocalStorageService
     {
-        public void Save<T>(string key, T mapSettingsData)
+        public void Save<T>(string key, T data)
         {
-            PlayerPrefs.SetString(key, JsonUtility.ToJson(mapSettingsData));
+            PlayerPrefs.SetString(key, JsonUtility.ToJson(data));
         }
 
-        public bool TryLoad<T>(string key, out T mapSettingsData) where T : class
+        public bool TryLoad<T>(string key, out T data) where T : class
         {
-            mapSettingsData = null;
+            data = null;
 
             if (PlayerPrefs.HasKey(key))
             {
-                var mapSettings = PlayerPrefs.GetString(key);
-                mapSettingsData = JsonUtility.FromJson<T>(mapSettings);
+                string jsonData = PlayerPrefs.GetString(key);
+                data = JsonUtility.FromJson<T>(jsonData);
                 return true;
             }
 

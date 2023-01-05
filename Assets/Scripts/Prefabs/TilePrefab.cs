@@ -8,7 +8,6 @@ namespace Prefabs
 
         public Material MeshRendererSharedMaterial
         {
-            get => _meshRenderer.sharedMaterial;
             set => _meshRenderer.sharedMaterial = value;
         }
     }
