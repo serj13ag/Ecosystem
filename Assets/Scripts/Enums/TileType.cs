@@ -1,4 +1,4 @@
-﻿namespace Map
+﻿namespace Enums
 {
     public enum TileType
     {

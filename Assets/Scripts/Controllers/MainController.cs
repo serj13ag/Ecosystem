@@ -8,7 +8,9 @@ namespace Controllers
     public class MainController : MonoBehaviour
     {
         [SerializeField] private MapSettingsWindow _mapSettingsWindow;
+        [SerializeField] private CameraModeWindow _cameraModeWindow;
 
+        [SerializeField] private CameraController _cameraController;
         [SerializeField] private MapController _mapController;
         [SerializeField] private TreesController _treesController;
 
@@ -25,6 +27,7 @@ namespace Controllers
             _treeService = new TreeService();
 
             _mapSettingsWindow.Init(this, _localStorageService);
+            _cameraModeWindow.Init(_cameraController);
         }
 
         public void UpdateMap(MapSettingsData mapSettingsData)
