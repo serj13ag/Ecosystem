@@ -70,7 +70,7 @@ namespace UI
 
         private void OnTreesRandomizePositionsButtonClick()
         {
-            UpdateMap();
+            _mainController.UpdateTrees(_treesPercentage.value);
         }
 
         private void OnGenerateMapButtonClick()

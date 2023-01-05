@@ -10,49 +10,37 @@ namespace Controllers
         [SerializeField] private GameObject _treePrefab;
         [SerializeField] private Transform _treesContainer;
 
-        private List<GameObject> _trees;
+        private List<GameObject> _treePrefabs;
 
         private void Awake()
         {
-            _trees = new List<GameObject>();
+            _treePrefabs = new List<GameObject>();
         }
 
-        public void UpdateTrees(float treesPercentageValue, Vector2Int[] landTilesPositions)
+        public void UpdateTrees(HashSet<Vector2Int> treePositions)
         {
-            if (_trees.Any())
+            if (_treePrefabs.Any())
             {
                 ResetTrees();
             }
 
-            CreateTrees(treesPercentageValue, landTilesPositions);
-
-            StaticBatchingUtility.Combine(_treesContainer.gameObject);
-        }
-
-        private void CreateTrees(float treesPercentageValue, Vector2Int[] landTilesPositions)
-        {
-            foreach (var landTilesPosition in landTilesPositions)
+            foreach (Vector2Int treePosition in treePositions)
             {
-                if (Random.Range(0, 100) > treesPercentageValue)
-                {
-                    continue;
-                }
-
-                var position = new Vector3(landTilesPosition.x, Constants.TerrainPositionY, landTilesPosition.y);
+                var position = new Vector3(treePosition.x, Constants.TerrainPositionY, treePosition.y);
                 GameObject tree = Instantiate(_treePrefab, position, Quaternion.identity, _treesContainer);
 
-                _trees.Add(tree);
+                _treePrefabs.Add(tree);
             }
         }
 
         private void ResetTrees()
         {
-            foreach (GameObject tree in _trees.ToArray())
+            foreach (GameObject tree in _treePrefabs.ToArray())
             {
                 Destroy(tree);
             }
 
-            _trees.Clear();
+            _treePrefabs.Clear();
         }
     }
 }
