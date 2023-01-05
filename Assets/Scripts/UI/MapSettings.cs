@@ -1,4 +1,5 @@
-using Map;
+using Data;
+using Services;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,8 +15,12 @@ namespace UI
         [SerializeField] private Slider _refinement;
         [SerializeField] private Slider _waterLevel;
 
-        [SerializeField] private MapGenerator _mapGenerator;
+        [SerializeField] private Slider _treesPercentage;
+        [SerializeField] private Button _treesRandomizePositions;
 
+        [SerializeField] private Button _generateMap;
+
+        private MainController _mainController;
         private int _seed;
 
         private int Seed
@@ -29,59 +34,64 @@ namespace UI
             }
         }
 
-        private void Awake()
+        public void Init(MainController mainController, LocalStorageService localStorageService)
         {
-            Seed = Constants.DefaultSeed;
-            _refinement.value = Constants.RefinementDefaultValue;
-            _waterLevel.value = Constants.WaterLevelDefaultValue;
+            _mainController = mainController;
+
+            if (localStorageService.TryLoad<MapSettingsData>(Constants.MapSettingsKey, out var mapSettingsData))
+            {
+                Seed = mapSettingsData.Seed;
+
+                _refinement.value = mapSettingsData.Refinement;
+                _waterLevel.value = mapSettingsData.WaterLevel;
+
+                _treesPercentage.value = mapSettingsData.TreesPercentage;
+            }
+            else
+            {
+                Seed = Constants.DefaultSeed;
+
+                _refinement.value = Constants.RefinementDefaultValue;
+                _waterLevel.value = Constants.WaterLevelDefaultValue;
+
+                _treesPercentage.value = Constants.TreesPercentageDefaultValue;
+            }
         }
 
         private void OnEnable()
         {
-            _seedInputField.onValueChanged.AddListener(OnSeedValueChanged);
             _seedRandomize.onClick.AddListener(OnSeedRandomizeButtonClick);
-
-            _refinement.onValueChanged.AddListener(OnRefinementValueChanged);
-            _waterLevel.onValueChanged.AddListener(OnWaterLevelValueChanged);
+            _treesRandomizePositions.onClick.AddListener(OnTreesRandomizePositionsButtonClick);
+            _generateMap.onClick.AddListener(OnGenerateMapButtonClick);
         }
 
-        private void Start()
-        {
-            UpdateMap();
-        }
-
-        private void OnSeedValueChanged(string value)
+        private void OnGenerateMapButtonClick()
         {
             UpdateMap();
         }
 
         private void OnSeedRandomizeButtonClick()
         {
-            Seed = Random.Range(0, 999999);
+            Seed = Random.Range(0, Constants.MaxSeedValue);
         }
 
-        private void OnRefinementValueChanged(float value)
-        {
-            UpdateMap();
-        }
-
-        private void OnWaterLevelValueChanged(float value)
+        private void OnTreesRandomizePositionsButtonClick()
         {
             UpdateMap();
         }
 
         private void UpdateMap()
         {
-            _mapGenerator.UpdateMap(Seed, _refinement.value, _waterLevel.value);
+            var mapSettingsData =
+                new MapSettingsData(Seed, _refinement.value, _waterLevel.value, _treesPercentage.value);
+            _mainController.UpdateMap(mapSettingsData);
         }
 
         private void OnDisable()
         {
-            _seedInputField.onValueChanged.RemoveListener(OnSeedValueChanged);
             _seedRandomize.onClick.RemoveListener(OnSeedRandomizeButtonClick);
-
-            _refinement.onValueChanged.RemoveListener(OnRefinementValueChanged);
-            _waterLevel.onValueChanged.RemoveListener(OnWaterLevelValueChanged);
+            _treesRandomizePositions.onClick.RemoveListener(OnTreesRandomizePositionsButtonClick);
+            _generateMap.onClick.AddListener(OnGenerateMapButtonClick);
         }
     }
 }

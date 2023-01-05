@@ -1,11 +1,15 @@
 using System;
+using System.Collections.Generic;
+using Data;
+using Prefabs;
+using UI;
 using UnityEngine;
 
 namespace Map
 {
     public class MapGenerator : MonoBehaviour
     {
-        [SerializeField] private GameObject _tilePrefab;
+        [SerializeField] private TilePrefab _tilePrefab;
         [SerializeField] private Transform _tilesContainer;
 
         [SerializeField] private int _mapSize;
@@ -13,17 +17,37 @@ namespace Map
         [SerializeField] private Material _waterMaterial;
         [SerializeField] private Material _landMaterial;
 
-        private GameObject[,] _tiles;
+        private TilePrefab[,] _tiles;
 
-        public void UpdateMap(int seed, float refinement, float waterLevel)
+        public Vector3[] GetLandTilesPositions()
         {
             if (_tiles == null)
             {
-                CreateTiles(seed, refinement, waterLevel);
+                return Array.Empty<Vector3>();
+            }
+
+            var landTilesPositions = new List<Vector3>();
+
+            foreach (var tile in _tiles)
+            {
+                if (tile.MeshRendererSharedMaterial == _landMaterial)
+                {
+                    landTilesPositions.Add(tile.transform.position);
+                }
+            }
+
+            return landTilesPositions.ToArray();
+        }
+
+        public void UpdateMap(MapSettingsData mapSettingsData)
+        {
+            if (_tiles == null)
+            {
+                CreateTiles(mapSettingsData.Seed, mapSettingsData.Refinement, mapSettingsData.WaterLevel);
             }
             else
             {
-                UpdateTiles(seed, refinement, waterLevel);
+                UpdateTiles(mapSettingsData.Seed, mapSettingsData.Refinement, mapSettingsData.WaterLevel);
             }
 
             CombineTileMeshes();
@@ -31,13 +55,13 @@ namespace Map
 
         private void CreateTiles(int seed, float refinement, float waterLevel)
         {
-            _tiles = new GameObject[_mapSize, _mapSize];
+            _tiles = new TilePrefab[_mapSize, _mapSize];
 
             for (var row = 0; row < _mapSize; row++)
             {
                 for (var column = 0; column < _mapSize; column++)
                 {
-                    GameObject tile = InstantiateTile(row, column);
+                    TilePrefab tile = InstantiateTile(row, column);
 
                     TileType tileType = GenerateTileType(row, column, seed, refinement, waterLevel);
                     UpdateTileMaterial(tile, tileType);
@@ -53,7 +77,7 @@ namespace Map
             {
                 for (var column = 0; column < _mapSize; column++)
                 {
-                    GameObject tile = _tiles[row, column];
+                    TilePrefab tile = _tiles[row, column];
 
                     TileType tileType = GenerateTileType(row, column, seed, refinement, waterLevel);
                     UpdateTileMaterial(tile, tileType);
@@ -75,7 +99,7 @@ namespace Map
                 : TileType.Water;
         }
 
-        private void UpdateTileMaterial(GameObject tile, TileType tileType)
+        private void UpdateTileMaterial(TilePrefab tile, TileType tileType)
         {
             Material tileMaterial = tileType switch
             {
@@ -84,10 +108,10 @@ namespace Map
                 _ => throw new ArgumentOutOfRangeException(nameof(tileType), tileType, null)
             };
 
-            tile.GetComponent<MeshRenderer>().sharedMaterial = tileMaterial;
+            tile.MeshRendererSharedMaterial = tileMaterial;
         }
 
-        private GameObject InstantiateTile(int row, int column)
+        private TilePrefab InstantiateTile(int row, int column)
         {
             return Instantiate(_tilePrefab, new Vector3(row, 0, column), Quaternion.identity, _tilesContainer);
         }
