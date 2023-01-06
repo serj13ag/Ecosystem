@@ -11,4 +11,5 @@
     public const int TreesPercentageDefaultValue = 10;
 
     public const int TerrainPositionY = 0;
+    public const int TerrainWaterPositionY = 0;
 }

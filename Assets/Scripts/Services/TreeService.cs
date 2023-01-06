@@ -23,7 +23,7 @@ namespace Services
         {
             foreach (Vector2Int landTilesPosition in landTilesPositions)
             {
-                if (Random.Range(0, 101) > treesPercentageValue)
+                if (Random.Range(0, 101) >= treesPercentageValue)
                 {
                     continue;
                 }
