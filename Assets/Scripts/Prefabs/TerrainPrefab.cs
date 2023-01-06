@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Prefabs
@@ -11,7 +12,22 @@ namespace Prefabs
 
         private Mesh _mesh;
 
-        public void InitMeshComponents()
+        private void Awake()
+        {
+            InitMeshComponents();
+        }
+
+        public void UpdateMesh(List<Vector3> vertices, List<int> triangles, List<Vector2> uvs, List<Vector3> normals)
+        {
+            _mesh.Clear();
+
+            _mesh.SetVertices(vertices);
+            _mesh.SetTriangles(triangles, 0, true);
+            _mesh.SetUVs(0, uvs);
+            _mesh.SetNormals(normals);
+        }
+
+        private void InitMeshComponents()
         {
             _mesh = new Mesh
             {
@@ -21,17 +37,6 @@ namespace Prefabs
             _meshFilter.sharedMesh = _mesh;
 
             _meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        }
-
-        public void InitMesh(List<Vector3> vertices, List<int> triangles, List<Vector2> uvs, List<Vector3> normals,
-            Material material)
-        {
-            _mesh.SetVertices(vertices);
-            _mesh.SetTriangles(triangles, 0, true);
-            _mesh.SetUVs(0, uvs);
-            _mesh.SetNormals(normals);
-
-            _meshRenderer.sharedMaterial = material;
         }
     }
 }

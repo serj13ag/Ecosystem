@@ -13,12 +13,8 @@ namespace Controllers
 
         [SerializeField] private TerrainPrefab _terrain;
 
-        [SerializeField] private Material _terrainMaterial;
-
         public void UpdateMap(List<Tile> mapTiles)
         {
-            _terrain.InitMeshComponents();
-
             CreateTerrain(mapTiles);
         }
 
@@ -58,7 +54,7 @@ namespace Controllers
                 triangles.Add(vertexIndex + 3);
             }
 
-            _terrain.InitMesh(vertices, triangles, uvs, normals, _terrainMaterial);
+            _terrain.UpdateMesh(vertices, triangles, uvs, normals);
         }
 
         private float GetTileHeight(Tile mapTile)

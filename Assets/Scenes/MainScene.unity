@@ -670,7 +670,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: af59278b173ddc348a3c9a767830c001, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -745,7 +745,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _terrain: {fileID: 1399189361}
-  _terrainMaterial: {fileID: 2100000, guid: af59278b173ddc348a3c9a767830c001, type: 2}
 --- !u!1 &1485918883
 GameObject:
   m_ObjectHideFlags: 0
