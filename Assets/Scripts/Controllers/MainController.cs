@@ -38,8 +38,6 @@ namespace Controllers
             _mapGenerated = true;
 
             UpdateTrees(mapSettingsData.TreesPercentage);
-
-            _localStorageService.Save(Constants.MapSettingsKey, mapSettingsData);
         }
 
         public void UpdateTrees(float treesPercentage)

@@ -19,9 +19,10 @@ namespace UI
         [SerializeField] private Slider _treesPercentage;
         [SerializeField] private Button _treesRandomizePositions;
 
-        [SerializeField] private Button _generateMap;
+        [SerializeField] private Button _saveMap;
 
         private MainController _mainController;
+        private LocalStorageService _localStorageService;
 
         private int _seed;
 
@@ -39,6 +40,7 @@ namespace UI
         public void Init(MainController mainController, LocalStorageService localStorageService)
         {
             _mainController = mainController;
+            _localStorageService = localStorageService;
 
             if (localStorageService.TryLoad(Constants.MapSettingsKey, out MapSettingsData mapSettingsData))
             {
@@ -59,13 +61,21 @@ namespace UI
         private void OnEnable()
         {
             _seedRandomize.onClick.AddListener(OnSeedRandomizeButtonClick);
+
+            _refinement.onValueChanged.AddListener(UpdateMap);
+            _waterLevel.onValueChanged.AddListener(UpdateMap);
+
+            _treesPercentage.onValueChanged.AddListener(UpdateMap);
             _treesRandomizePositions.onClick.AddListener(OnTreesRandomizePositionsButtonClick);
-            _generateMap.onClick.AddListener(OnGenerateMapButtonClick);
+
+            _saveMap.onClick.AddListener(OnSaveMapButtonClick);
         }
 
         private void OnSeedRandomizeButtonClick()
         {
             Seed = Random.Range(0, Constants.MaxSeedValue);
+
+            UpdateMap();
         }
 
         private void OnTreesRandomizePositionsButtonClick()
@@ -73,23 +83,37 @@ namespace UI
             _mainController.UpdateTrees(_treesPercentage.value);
         }
 
-        private void OnGenerateMapButtonClick()
+        private void OnSaveMapButtonClick()
+        {
+            _localStorageService.Save(Constants.MapSettingsKey, CreateMapSettingsData());
+        }
+
+        private void UpdateMap(float arg0)
         {
             UpdateMap();
         }
 
         private void UpdateMap()
         {
-            var mapSettingsData =
-                new MapSettingsData(Seed, _refinement.value, _waterLevel.value, _treesPercentage.value);
-            _mainController.UpdateMap(mapSettingsData);
+            _mainController.UpdateMap(CreateMapSettingsData());
+        }
+
+        private MapSettingsData CreateMapSettingsData()
+        {
+            return new MapSettingsData(Seed, _refinement.value, _waterLevel.value, _treesPercentage.value);
         }
 
         private void OnDisable()
         {
             _seedRandomize.onClick.RemoveListener(OnSeedRandomizeButtonClick);
+
+            _refinement.onValueChanged.RemoveListener(UpdateMap);
+            _waterLevel.onValueChanged.RemoveListener(UpdateMap);
+
+            _treesPercentage.onValueChanged.RemoveListener(UpdateMap);
             _treesRandomizePositions.onClick.RemoveListener(OnTreesRandomizePositionsButtonClick);
-            _generateMap.onClick.AddListener(OnGenerateMapButtonClick);
+
+            _saveMap.onClick.RemoveListener(OnSaveMapButtonClick);
         }
     }
 }
