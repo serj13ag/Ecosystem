@@ -11,7 +11,7 @@ namespace Controllers
         [SerializeField] private CameraModeWindow _cameraModeWindow;
 
         [SerializeField] private CameraController _cameraController;
-        [SerializeField] private MapController _mapController;
+        [SerializeField] private TerrainController _terrainController;
         [SerializeField] private TreesController _treesController;
 
         private LocalStorageService _localStorageService;
@@ -33,7 +33,7 @@ namespace Controllers
         public void UpdateMap(MapSettingsData mapSettingsData)
         {
             _mapService.UpdateMap(mapSettingsData);
-            _mapController.UpdateMap(_mapService.MapTiles);
+            _terrainController.UpdateMap(_mapService.MapTiles);
 
             _mapGenerated = true;
 

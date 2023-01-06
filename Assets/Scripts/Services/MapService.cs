@@ -27,10 +27,10 @@ namespace Services
                     TileType tileType = GenerateTileType(row, column,
                         mapSettingsData.Seed, mapSettingsData.Refinement, mapSettingsData.WaterLevel);
 
-                    bool onBorder = row == 0
-                                    || column == 0
-                                    || row == Constants.MapSize - 1
-                                    || column == Constants.MapSize - 1;
+                    bool onBorder = row == 0 ||
+                                    column == 0 ||
+                                    row == Constants.MapSize - 1 ||
+                                    column == Constants.MapSize - 1;
 
                     MapTiles.Add(new Tile(row, column, tileType, onBorder));
                 }

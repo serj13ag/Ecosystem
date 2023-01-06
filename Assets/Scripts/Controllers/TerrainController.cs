@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Controllers
 {
-    public class MapController : MonoBehaviour
+    public class TerrainController : MonoBehaviour
     {
         private const float StartVertex = -0.5f;
 
