@@ -47,7 +47,7 @@ namespace Controllers
                 return;
             }
 
-            _treeService.GenerateTrees(treesPercentage, _mapService.GetLandTilesPositions());
+            _treeService.GenerateTrees(treesPercentage, _mapService.GetSuitableForPlantsTilesPositions());
             _treesController.UpdateTrees(_treeService.TreePositions);
         }
     }

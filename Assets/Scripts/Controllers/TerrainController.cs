@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using Enums;
 using Map;
 using Prefabs;
 using UnityEngine;
@@ -137,12 +135,9 @@ namespace Controllers
 
         private static float GetTileHeight(Tile mapTile)
         {
-            return mapTile.Type switch
-            {
-                TileType.Land => Constants.TerrainPositionY,
-                TileType.Water => Constants.TerrainWaterPositionY,
-                _ => throw new ArgumentOutOfRangeException(),
-            };
+            return mapTile.Walkable
+                ? Constants.TerrainPositionY
+                : Constants.TerrainWaterPositionY;
         }
 
         private static Vector2 GetMapTileUV(Tile mapTile)
