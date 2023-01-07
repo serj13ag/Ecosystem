@@ -24,7 +24,8 @@ namespace Services
             {
                 for (var column = 0; column < Constants.MapSize; column++)
                 {
-                    float tilePerlinHeight = GeneratePerlinNoise(row, column, mapSettingsData.Seed, mapSettingsData.Refinement);
+                    float tilePerlinHeight =
+                        GeneratePerlinNoise(row, column, mapSettingsData.Seed, mapSettingsData.Refinement);
 
                     float tileActualHeight = tilePerlinHeight + (0.5f - mapSettingsData.WaterLevel);
                     TileType tileType = GetTileType(tilePerlinHeight, mapSettingsData.WaterLevel);
@@ -65,7 +66,7 @@ namespace Services
 
         private static TileType GetTileType(float tileHeight, float waterLevel)
         {
-            return tileHeight >= waterLevel
+            return tileHeight >= waterLevel + Constants.TreesShoreOffset
                 ? TileType.Land
                 : TileType.Water;
         }
