@@ -6,19 +6,19 @@ namespace Controllers
 {
     public class TreesController : MonoBehaviour
     {
-        [SerializeField] private GameObject _treePrefab;
+        [SerializeField] private GameObject[] _treePrefabs;
         [SerializeField] private Transform _treesContainer;
 
-        private List<GameObject> _treePrefabs;
+        private List<GameObject> _spawnedTreePrefabs;
 
         private void Awake()
         {
-            _treePrefabs = new List<GameObject>();
+            _spawnedTreePrefabs = new List<GameObject>();
         }
 
         public void UpdateTrees(HashSet<Vector2Int> treePositions)
         {
-            if (_treePrefabs.Any())
+            if (_spawnedTreePrefabs.Any())
             {
                 ResetTrees();
             }
@@ -26,20 +26,25 @@ namespace Controllers
             foreach (Vector2Int treePosition in treePositions)
             {
                 var position = new Vector3(treePosition.x, Constants.TerrainPositionY, treePosition.y);
-                GameObject tree = Instantiate(_treePrefab, position, Quaternion.identity, _treesContainer);
+                GameObject tree = Instantiate(GetRandomTreePrefab(), position, Quaternion.identity, _treesContainer);
 
-                _treePrefabs.Add(tree);
+                _spawnedTreePrefabs.Add(tree);
             }
+        }
+
+        private GameObject GetRandomTreePrefab()
+        {
+            return _treePrefabs[Random.Range(0, _treePrefabs.Length)];
         }
 
         private void ResetTrees()
         {
-            foreach (GameObject tree in _treePrefabs.ToArray())
+            foreach (GameObject tree in _spawnedTreePrefabs.ToArray())
             {
                 Destroy(tree);
             }
 
-            _treePrefabs.Clear();
+            _spawnedTreePrefabs.Clear();
         }
     }
 }
