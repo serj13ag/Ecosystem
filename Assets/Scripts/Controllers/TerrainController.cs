@@ -137,7 +137,7 @@ namespace Controllers
 
         private static float GetTileHeight(Tile mapTile)
         {
-            return mapTile.TileType switch
+            return mapTile.Type switch
             {
                 TileType.Land => Constants.TerrainPositionY,
                 TileType.Water => Constants.TerrainWaterPositionY,
@@ -147,12 +147,7 @@ namespace Controllers
 
         private static Vector2 GetMapTileUV(Tile mapTile)
         {
-            return mapTile.TileType switch
-            {
-                TileType.Land => new Vector2(1, 1),
-                TileType.Water => new Vector2(0, 0),
-                _ => throw new ArgumentOutOfRangeException(),
-            };
+            return new Vector2(mapTile.Height, mapTile.Height);
         }
     }
 }

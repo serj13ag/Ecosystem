@@ -24,15 +24,17 @@ namespace Services
             {
                 for (var column = 0; column < Constants.MapSize; column++)
                 {
-                    TileType tileType = GenerateTileType(row, column,
-                        mapSettingsData.Seed, mapSettingsData.Refinement, mapSettingsData.WaterLevel);
+                    float tilePerlinHeight = GeneratePerlinNoise(row, column, mapSettingsData.Seed, mapSettingsData.Refinement);
+
+                    float tileActualHeight = tilePerlinHeight + (0.5f - mapSettingsData.WaterLevel);
+                    TileType tileType = GetTileType(tilePerlinHeight, mapSettingsData.WaterLevel);
 
                     bool onBorder = row == 0 ||
                                     column == 0 ||
                                     row == Constants.MapSize - 1 ||
                                     column == Constants.MapSize - 1;
 
-                    MapTiles.Add(new Tile(row, column, tileType, onBorder));
+                    MapTiles.Add(new Tile(row, column, tileActualHeight, tileType, onBorder));
                 }
             }
         }
@@ -47,7 +49,7 @@ namespace Services
             var landTilesPositions = new List<Vector2Int>();
             foreach (var tile in MapTiles)
             {
-                if (tile.TileType == TileType.Land)
+                if (tile.Type == TileType.Land)
                 {
                     landTilesPositions.Add(tile.Position);
                 }
@@ -56,11 +58,14 @@ namespace Services
             return landTilesPositions.ToArray();
         }
 
-        private TileType GenerateTileType(int row, int column, int seed, float refinement, float waterLevel)
+        private static float GeneratePerlinNoise(int row, int column, int seed, float refinement)
         {
-            float tileHeight = Mathf.PerlinNoise(row * refinement + seed, column * refinement + seed);
+            return Mathf.PerlinNoise(row * refinement + seed, column * refinement + seed);
+        }
 
-            return tileHeight > waterLevel
+        private static TileType GetTileType(float tileHeight, float waterLevel)
+        {
+            return tileHeight >= waterLevel
                 ? TileType.Land
                 : TileType.Water;
         }
