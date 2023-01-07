@@ -6,14 +6,14 @@ namespace Data
     public class MapSettingsData
     {
         public int Seed;
-        public float Refinement;
+        public float Scale;
         public float WaterLevel;
         public float TreesPercentage;
 
-        public MapSettingsData(int seed, float refinement, float waterLevel, float treesPercentage)
+        public MapSettingsData(int seed, float scale, float waterLevel, float treesPercentage)
         {
             Seed = seed;
-            Refinement = refinement;
+            Scale = scale;
             WaterLevel = waterLevel;
             TreesPercentage = treesPercentage;
         }

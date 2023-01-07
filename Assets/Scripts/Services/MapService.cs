@@ -25,7 +25,7 @@ namespace Services
                 for (var column = 0; column < Constants.MapSize; column++)
                 {
                     float tilePerlinHeight =
-                        GeneratePerlinNoise(row, column, mapSettingsData.Seed, mapSettingsData.Refinement);
+                        GeneratePerlinNoise(row, column, mapSettingsData.Seed, mapSettingsData.Scale);
 
                     float tileActualHeight = tilePerlinHeight + (0.5f - mapSettingsData.WaterLevel);
                     TileType tileType = GetTileType(tilePerlinHeight, mapSettingsData.WaterLevel);
@@ -59,9 +59,10 @@ namespace Services
             return landTilesPositions.ToArray();
         }
 
-        private static float GeneratePerlinNoise(int row, int column, int seed, float refinement)
+        private static float GeneratePerlinNoise(int row, int column, int seed, float scale)
         {
-            return Mathf.PerlinNoise(row * refinement + seed, column * refinement + seed);
+            return Mathf.PerlinNoise((row - Constants.MapSize / 2f) * scale + seed,
+                (column - Constants.MapSize / 2f) * scale + seed);
         }
 
         private static TileType GetTileType(float tileHeight, float waterLevel)

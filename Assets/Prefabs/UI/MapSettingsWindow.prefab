@@ -2132,7 +2132,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _seedInputField: {fileID: 5139266654404454996}
   _seedRandomize: {fileID: 5139266654321131624}
-  _refinement: {fileID: 5139266654377444507}
+  _scale: {fileID: 5139266654377444507}
   _waterLevel: {fileID: 5139266654492462960}
   _treesPercentage: {fileID: 69707222}
   _treesRandomizePositions: {fileID: 429489247}
@@ -2965,7 +2965,7 @@ PrefabInstance:
     - target: {fileID: 2005061380400978428, guid: 6465aff424141d444b23c4b059d4caaf,
         type: 3}
       propertyPath: m_text
-      value: Refinement
+      value: Scale
       objectReference: {fileID: 0}
     - target: {fileID: 2005061381244102385, guid: 6465aff424141d444b23c4b059d4caaf,
         type: 3}
@@ -3070,7 +3070,7 @@ PrefabInstance:
     - target: {fileID: 2005061381244102398, guid: 6465aff424141d444b23c4b059d4caaf,
         type: 3}
       propertyPath: m_Name
-      value: Refinement
+      value: Scale
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6465aff424141d444b23c4b059d4caaf, type: 3}

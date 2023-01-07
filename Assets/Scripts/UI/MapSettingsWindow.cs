@@ -13,7 +13,7 @@ namespace UI
         [SerializeField] private TMP_InputField _seedInputField;
         [SerializeField] private Button _seedRandomize;
 
-        [SerializeField] private Slider _refinement;
+        [SerializeField] private Slider _scale;
         [SerializeField] private Slider _waterLevel;
 
         [SerializeField] private Slider _treesPercentage;
@@ -45,14 +45,14 @@ namespace UI
             if (localStorageService.TryLoad(Constants.MapSettingsKey, out MapSettingsData mapSettingsData))
             {
                 Seed = mapSettingsData.Seed;
-                _refinement.value = mapSettingsData.Refinement;
+                _scale.value = mapSettingsData.Scale;
                 _waterLevel.value = mapSettingsData.WaterLevel;
                 _treesPercentage.value = mapSettingsData.TreesPercentage;
             }
             else
             {
                 Seed = Constants.DefaultSeed;
-                _refinement.value = Constants.RefinementDefaultValue;
+                _scale.value = Constants.ScaleDefaultValue;
                 _waterLevel.value = Constants.WaterLevelDefaultValue;
                 _treesPercentage.value = Constants.TreesPercentageDefaultValue;
             }
@@ -62,7 +62,7 @@ namespace UI
         {
             _seedRandomize.onClick.AddListener(OnSeedRandomizeButtonClick);
 
-            _refinement.onValueChanged.AddListener(UpdateMap);
+            _scale.onValueChanged.AddListener(UpdateMap);
             _waterLevel.onValueChanged.AddListener(UpdateMap);
 
             _treesPercentage.onValueChanged.AddListener(UpdateMap);
@@ -100,14 +100,14 @@ namespace UI
 
         private MapSettingsData CreateMapSettingsData()
         {
-            return new MapSettingsData(Seed, _refinement.value, _waterLevel.value, _treesPercentage.value);
+            return new MapSettingsData(Seed, _scale.value, _waterLevel.value, _treesPercentage.value);
         }
 
         private void OnDisable()
         {
             _seedRandomize.onClick.RemoveListener(OnSeedRandomizeButtonClick);
 
-            _refinement.onValueChanged.RemoveListener(UpdateMap);
+            _scale.onValueChanged.RemoveListener(UpdateMap);
             _waterLevel.onValueChanged.RemoveListener(UpdateMap);
 
             _treesPercentage.onValueChanged.RemoveListener(UpdateMap);

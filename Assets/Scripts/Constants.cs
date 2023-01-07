@@ -6,12 +6,12 @@
 
     public const int MaxSeedValue = 999999;
     public const int DefaultSeed = 1;
-    public const float RefinementDefaultValue = 0.02f;
+    public const float ScaleDefaultValue = 0.02f;
     public const float WaterLevelDefaultValue = 0.3f;
     public const int TreesPercentageDefaultValue = 10;
 
     public const int TerrainPositionY = 0;
     public const int TerrainWaterPositionY = 0;
 
-    public const float TreesShoreOffset = 0.06f;
+    public const float TreesShoreOffset = 0.04f;
 }
