@@ -17,7 +17,6 @@ namespace UI
         [SerializeField] private Slider _waterLevel;
 
         [SerializeField] private Slider _treesPercentage;
-        [SerializeField] private Button _treesRandomizePositions;
 
         [SerializeField] private Button _saveMap;
 
@@ -66,7 +65,6 @@ namespace UI
             _waterLevel.onValueChanged.AddListener(UpdateMap);
 
             _treesPercentage.onValueChanged.AddListener(UpdateMap);
-            _treesRandomizePositions.onClick.AddListener(OnTreesRandomizePositionsButtonClick);
 
             _saveMap.onClick.AddListener(OnSaveMapButtonClick);
         }
@@ -76,11 +74,6 @@ namespace UI
             Seed = Random.Range(0, Constants.MaxSeedValue);
 
             UpdateMap();
-        }
-
-        private void OnTreesRandomizePositionsButtonClick()
-        {
-            _mainController.UpdateTrees(_treesPercentage.value);
         }
 
         private void OnSaveMapButtonClick()
@@ -111,7 +104,6 @@ namespace UI
             _waterLevel.onValueChanged.RemoveListener(UpdateMap);
 
             _treesPercentage.onValueChanged.RemoveListener(UpdateMap);
-            _treesRandomizePositions.onClick.RemoveListener(OnTreesRandomizePositionsButtonClick);
 
             _saveMap.onClick.RemoveListener(OnSaveMapButtonClick);
         }
