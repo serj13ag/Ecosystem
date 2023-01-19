@@ -11,7 +11,11 @@
     public const int TreesPercentageDefaultValue = 10;
 
     public const int TerrainPositionY = 0;
-    public const int TerrainWaterPositionY = 0;
+    public const float TerrainWaterPositionY = -0.5f;
 
     public const float TreesShoreOffset = 0.04f;
+
+    public const float ShallowLowerHeight = 0.45f;
+    public const float ShallowHigherHeight = 0.5f;
+    public const float ShallowUV = 0.49f;
 }

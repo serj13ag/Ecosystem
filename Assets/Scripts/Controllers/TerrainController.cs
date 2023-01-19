@@ -142,7 +142,10 @@ namespace Controllers
 
         private static Vector2 GetMapTileUV(Tile mapTile)
         {
-            return new Vector2(mapTile.Height, mapTile.Height);
+            float uv = mapTile.IsShallow
+                ? Constants.ShallowUV
+                : mapTile.Height;
+            return new Vector2(uv, uv);
         }
     }
 }
