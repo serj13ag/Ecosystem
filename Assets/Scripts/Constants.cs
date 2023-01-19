@@ -4,7 +4,7 @@
 
     public const int MapSize = 200;
 
-    public const int MaxSeedValue = 999999;
+    public const int MaxSeedValue = 99999;
     public const int DefaultSeed = 1;
     public const float ScaleDefaultValue = 0.02f;
     public const float WaterLevelDefaultValue = 0.3f;

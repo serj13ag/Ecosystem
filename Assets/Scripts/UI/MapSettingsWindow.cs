@@ -59,6 +59,7 @@ namespace UI
 
         private void OnEnable()
         {
+            _seedInputField.onValueChanged.AddListener(OnSeedInputValueChanged);
             _seedRandomize.onClick.AddListener(OnSeedRandomizeButtonClick);
 
             _scale.onValueChanged.AddListener(UpdateMap);
@@ -67,6 +68,13 @@ namespace UI
             _treesPercentage.onValueChanged.AddListener(UpdateMap);
 
             _saveMap.onClick.AddListener(OnSaveMapButtonClick);
+        }
+
+        private void OnSeedInputValueChanged(string value)
+        {
+            Seed = Mathf.Min(int.Parse(value), Constants.MaxSeedValue);
+
+            UpdateMap();
         }
 
         private void OnSeedRandomizeButtonClick()
@@ -98,6 +106,7 @@ namespace UI
 
         private void OnDisable()
         {
+            _seedInputField.onValueChanged.RemoveListener(OnSeedInputValueChanged);
             _seedRandomize.onClick.RemoveListener(OnSeedRandomizeButtonClick);
 
             _scale.onValueChanged.RemoveListener(UpdateMap);
