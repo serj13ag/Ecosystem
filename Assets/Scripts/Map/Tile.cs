@@ -12,9 +12,9 @@ namespace Map
         public bool Walkable { get; }
         public bool IsShallow { get; }
 
-        public Tile(int positionX, int positionY, float height, bool onBorder, bool suitableForPlants, bool isWalkable)
+        public Tile(Vector2Int position, float height, bool onBorder, bool suitableForPlants, bool isWalkable)
         {
-            Position = new Vector2Int(positionX, positionY);
+            Position = position;
             Height = height;
             OnBorder = onBorder;
 

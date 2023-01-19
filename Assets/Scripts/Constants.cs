@@ -12,6 +12,7 @@
 
     public const int TerrainPositionY = 0;
     public const float TerrainWaterPositionY = -0.5f;
+    public const float BorderSideBottomPositionY = -1f;
 
     public const float TreesShoreOffset = 0.04f;
 

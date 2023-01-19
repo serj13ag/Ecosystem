@@ -11,11 +11,11 @@ namespace Services
     {
         private const float HalfMapSize = Constants.MapSize / 2f;
 
-        public List<Tile> MapTiles { get; }
+        public Dictionary<Vector2Int, Tile> MapTiles { get; }
 
         public MapService()
         {
-            MapTiles = new List<Tile>();
+            MapTiles = new Dictionary<Vector2Int, Tile>();
         }
 
         public void UpdateMap(MapSettingsData mapSettingsData)
@@ -39,7 +39,9 @@ namespace Services
                     bool walkable = tilePerlinHeight > mapSettingsData.WaterLevel;
                     bool suitableForPlants = tilePerlinHeight > mapSettingsData.WaterLevel + Constants.TreesShoreOffset;
 
-                    MapTiles.Add(new Tile(row, column, tileActualHeight, onBorder, suitableForPlants, walkable));
+                    Vector2Int tilePosition = new Vector2Int(row, column);
+                    Tile tile = new Tile(tilePosition, tileActualHeight, onBorder, suitableForPlants, walkable);
+                    MapTiles.Add(tilePosition, tile);
                 }
             }
         }
@@ -52,6 +54,7 @@ namespace Services
             }
 
             return MapTiles
+                .Values
                 .Where(x => x.SuitableForPlants)
                 .Select(y => y.Position)
                 .ToArray();

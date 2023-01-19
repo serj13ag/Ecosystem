@@ -22,45 +22,55 @@ namespace Controllers
             new[] { 2, 3 }, new[] { 3, 0 },
         };
 
-        public void UpdateMap(List<Tile> mapTiles)
+        public void UpdateMap(Dictionary<Vector2Int, Tile> mapTiles)
         {
             CreateTerrain(mapTiles);
         }
 
-        private void CreateTerrain(List<Tile> mapTiles)
+        private void CreateTerrain(Dictionary<Vector2Int, Tile> mapTiles)
         {
             var vertices = new List<Vector3>();
             var uvs = new List<Vector2>();
             var triangles = new List<int>();
             var normals = new List<Vector3>();
 
-            foreach (Tile mapTile in mapTiles)
+            foreach (Tile mapTile in mapTiles.Values)
             {
                 triangles.AddRange(GetTileFaceTriangles(vertices.Count));
-
-                Vector3[] tileTopVertices = GetTileTopVertices(mapTile);
-                vertices.AddRange(tileTopVertices);
+                vertices.AddRange(GetTileTopVertices(mapTile));
 
                 Vector2 mapTileUV = GetMapTileUV(mapTile);
                 uvs.AddRange(GetTileFaceUVs(mapTileUV));
 
                 normals.AddRange(_tileTopNormals);
 
-                if (mapTile.OnBorder)
+                if (!mapTile.Walkable && !mapTile.OnBorder)
                 {
-                    for (var sideDirectionIndex = 0; sideDirectionIndex < _sideDirections.Length; sideDirectionIndex++)
+                    continue;
+                }
+
+                for (var sideDirectionIndex = 0; sideDirectionIndex < _sideDirections.Length; sideDirectionIndex++)
+                {
+                    Vector2Int sideDirection = _sideDirections[sideDirectionIndex];
+                    Vector2Int neighbourPosition = GetNeighbourPosition(mapTile, sideDirection);
+
+                    Vector3[] tileTopVertices = GetTileTopVertices(mapTile);
+
+                    if (mapTile.Walkable && mapTiles.TryGetValue(neighbourPosition, out Tile neighbourTile)
+                                         && !neighbourTile.Walkable)
                     {
-                        Vector2Int sideDirection = _sideDirections[sideDirectionIndex];
+                        triangles.AddRange(GetTileFaceTriangles(vertices.Count));
+                        vertices.AddRange(GetTileSideVertices(sideDirectionIndex, tileTopVertices, Constants.TerrainWaterPositionY));
+                        uvs.AddRange(GetTileFaceUVs(mapTileUV));
+                        normals.AddRange(GetTileSideNormals(sideDirection));
+                    }
 
-                        var neighbourPosition = GetNeighbourPosition(mapTile, sideDirection);
-
-                        if (NeighbourOutOfBounds(neighbourPosition))
-                        {
-                            triangles.AddRange(GetTileFaceTriangles(vertices.Count));
-                            vertices.AddRange(GetTileSideVertices(sideDirectionIndex, tileTopVertices));
-                            uvs.AddRange(GetTileFaceUVs(mapTileUV));
-                            normals.AddRange(GetTileSideNormals(sideDirection));
-                        }
+                    if (mapTile.OnBorder && NeighbourOutOfBounds(neighbourPosition))
+                    {
+                        triangles.AddRange(GetTileFaceTriangles(vertices.Count));
+                        vertices.AddRange(GetTileSideVertices(sideDirectionIndex, tileTopVertices, Constants.BorderSideBottomPositionY));
+                        uvs.AddRange(GetTileFaceUVs(mapTileUV));
+                        normals.AddRange(GetTileSideNormals(sideDirection));
                     }
                 }
             }
@@ -81,15 +91,21 @@ namespace Controllers
             return new[] { leftBottomVertex, leftTopVertex, rightTopVertex, rightBottomVertex };
         }
 
-        private Vector3[] GetTileSideVertices(int sideDirectionIndex, Vector3[] tileTopVertices)
+        private Vector3[] GetTileSideVertices(int sideDirectionIndex, Vector3[] tileTopVertices, float bottomPositionY)
         {
             int edgeVertexIndexA = _sideVertexIndexByDirection[sideDirectionIndex][0];
             int edgeVertexIndexB = _sideVertexIndexByDirection[sideDirectionIndex][1];
 
-            Vector3 leftBottomVertex = tileTopVertices[edgeVertexIndexB] + Vector3.down;
+            Vector3 leftBottomVertex = new Vector3(
+                tileTopVertices[edgeVertexIndexB].x,
+                bottomPositionY,
+                tileTopVertices[edgeVertexIndexB].z);
             Vector3 leftTopVertex = tileTopVertices[edgeVertexIndexB];
             Vector3 rightTopVertex = tileTopVertices[edgeVertexIndexA];
-            Vector3 rightBottomVertex = tileTopVertices[edgeVertexIndexA] + Vector3.down;
+            Vector3 rightBottomVertex = new Vector3(
+                tileTopVertices[edgeVertexIndexA].x,
+                bottomPositionY,
+                tileTopVertices[edgeVertexIndexA].z);
 
             return new[] { leftBottomVertex, leftTopVertex, rightTopVertex, rightBottomVertex };
         }
@@ -145,6 +161,7 @@ namespace Controllers
             float uv = mapTile.IsShallow
                 ? Constants.ShallowUV
                 : mapTile.Height;
+
             return new Vector2(uv, uv);
         }
     }
