@@ -11,9 +11,9 @@ namespace Services
             return new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         }
 
-        public Vector2 GetMoveAxis()
+        public Vector3 GetMoveAxis()
         {
-            return new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+            return new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Elevate"), Input.GetAxis("Vertical"));
         }
     }
 }

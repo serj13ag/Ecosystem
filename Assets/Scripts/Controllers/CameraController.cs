@@ -78,9 +78,15 @@ namespace Controllers
                 cameraTransform.RotateAround(cameraTransformPosition, cameraTransform.right, -mouseAxis.y);
             }
 
-            Vector2 moveAxis = _inputService.GetMoveAxis();
+            Vector3 moveAxis = _inputService.GetMoveAxis();
+            cameraTransform.Translate(new Vector3(moveAxis.x, moveAxis.y, moveAxis.z));
 
-            cameraTransform.Translate(new Vector3(moveAxis.x, 0, moveAxis.y));
+            Vector3 cameraPosition = cameraTransform.position;
+            float posX = Mathf.Clamp(cameraPosition.x, -100f, 300f);
+            float posY = Mathf.Clamp(cameraPosition.y, 0f, 100f);
+            float posZ = Mathf.Clamp(cameraPosition.z, -100f, 300f);
+
+            cameraTransform.position = new Vector3(posX, posY, posZ);
         }
 
         private void UpdateFieldOfView()
