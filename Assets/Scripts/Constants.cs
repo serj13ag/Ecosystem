@@ -24,6 +24,7 @@ public static class Constants
 
     public const float CameraRotateFieldOfView = 15f;
     public const float CameraFlyFieldOfView = 30f;
+    public const float CameraRotationSpeed = 10f;
 
     public static Vector3 CameraInitialPositionRotateMode => new Vector3(-300, 300, -300);
     public static Vector3 CameraInitialPositionFlyMode => new Vector3(-100, 100, -100);

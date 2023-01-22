@@ -8,7 +8,6 @@ namespace Controllers
     public class CameraController : MonoBehaviour
     {
         [SerializeField] private Camera _camera;
-        [SerializeField] private float _speed;
 
         private InputService _inputService;
 
@@ -62,7 +61,8 @@ namespace Controllers
 
         private void HandleRotateModeUpdate()
         {
-            _camera.transform.RotateAround(_mapCenterPosition, Vector3.up, Time.deltaTime * _speed);
+            _camera.transform.RotateAround(_mapCenterPosition, Vector3.up,
+                Time.deltaTime * Constants.CameraRotationSpeed);
         }
 
         private void HandleFlyModeUpdate()
