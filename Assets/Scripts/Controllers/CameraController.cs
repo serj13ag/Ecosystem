@@ -1,36 +1,33 @@
 using System;
 using Enums;
+using Services;
 using UnityEngine;
+using static Constants;
 
 namespace Controllers
 {
     public class CameraController : MonoBehaviour
     {
         [SerializeField] private Camera _camera;
-        [SerializeField] private float _speed;
+
+        private InputService _inputService;
 
         private Vector3 _mapCenterPosition;
         private CameraMode[] _cameraModes;
 
-        private Vector3 _cameraInitialPosition;
-        private Quaternion _cameraInitialRotation;
-
         public CameraMode CurrentMode { get; private set; }
 
-        private void Awake()
+        public void Init(InputService inputService)
         {
-            _mapCenterPosition = new Vector3(Constants.MapSize / 2f, 0, Constants.MapSize / 2f);
+            _inputService = inputService;
+
+            _mapCenterPosition = new Vector3(MapSize / 2f, 0, MapSize / 2f);
             _cameraModes = new[] { CameraMode.Rotate, CameraMode.Fly };
-        }
-
-        private void Start()
-        {
-            _camera.transform.LookAt(_mapCenterPosition);
-
-            _cameraInitialPosition = _camera.transform.position;
-            _cameraInitialRotation = _camera.transform.rotation;
 
             CurrentMode = CameraMode.Rotate;
+
+            ResetPositionAndRotation();
+            UpdateFieldOfView();
         }
 
         private void Update()
@@ -38,9 +35,10 @@ namespace Controllers
             switch (CurrentMode)
             {
                 case CameraMode.Rotate:
-                    _camera.transform.RotateAround(_mapCenterPosition, Vector3.up, Time.deltaTime * _speed);
+                    HandleRotateModeUpdate();
                     break;
                 case CameraMode.Fly:
+                    HandleFlyModeUpdate();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -58,8 +56,98 @@ namespace Controllers
                 CurrentMode = 0;
             }
 
-            _camera.transform.position = _cameraInitialPosition;
-            _camera.transform.rotation = _cameraInitialRotation;
+            ResetPositionAndRotation();
+            UpdateFieldOfView();
+        }
+
+        private void HandleRotateModeUpdate()
+        {
+            _camera.transform.RotateAround(_mapCenterPosition, Vector3.up, Time.deltaTime * CameraRotationSpeed);
+        }
+
+        private void HandleFlyModeUpdate()
+        {
+            if (_inputService.RightMouseButtonPressed)
+            {
+                Vector2 mouseAxis = _inputService.GetMouseAxis();
+                if (mouseAxis != Vector2.zero)
+                {
+                    RotateCamera(mouseAxis);
+                }
+            }
+
+            Vector3 moveAxis = _inputService.GetMoveAxis();
+            if (moveAxis != Vector3.zero)
+            {
+                MoveCamera(moveAxis);
+            }
+        }
+
+        private void RotateCamera(Vector2 mouseAxis)
+        {
+            Vector3 cameraTransformPosition = _camera.transform.position;
+
+            _camera.transform.RotateAround(cameraTransformPosition, Vector3.down, -mouseAxis.x);
+            _camera.transform.RotateAround(cameraTransformPosition, _camera.transform.right, -mouseAxis.y);
+        }
+
+        private void MoveCamera(Vector3 moveAxis)
+        {
+            Vector3 movement = CalculateMovement(_camera.transform, moveAxis);
+            Vector3 newPosition = _camera.transform.position + movement;
+
+            newPosition.y = Mathf.Max(newPosition.y, CameraMinPositionY);
+
+            Vector3 offsetFromCenter = newPosition - _mapCenterPosition;
+            _camera.transform.position = _mapCenterPosition +
+                                         Vector3.ClampMagnitude(offsetFromCenter, CameraMaxDistanceFromCenter);
+        }
+
+        private Vector3 CalculateMovement(Transform cameraTransform, Vector3 moveAxis)
+        {
+            Vector3 movement = Vector3.zero;
+
+            float cameraSpeed = _inputService.ShiftPressed ? CameraFlySpeedWithShift : CameraFlySpeed;
+
+            if (moveAxis.x != 0)
+            {
+                movement += cameraTransform.right * (moveAxis.x * Time.deltaTime * cameraSpeed);
+            }
+
+            if (moveAxis.y != 0)
+            {
+                movement += Vector3.up * (moveAxis.y * Time.deltaTime * cameraSpeed);
+            }
+
+            if (moveAxis.z != 0)
+            {
+                movement += cameraTransform.forward * (moveAxis.z * Time.deltaTime * cameraSpeed);
+            }
+
+            return movement;
+        }
+
+        private void UpdateFieldOfView()
+        {
+            _camera.fieldOfView = CurrentMode switch
+            {
+                CameraMode.Rotate => CameraRotateFieldOfView,
+                CameraMode.Fly => CameraFlyFieldOfView,
+                _ => throw new ArgumentOutOfRangeException(),
+            };
+        }
+
+        private void ResetPositionAndRotation()
+        {
+            Vector3 newPosition = CurrentMode switch
+            {
+                CameraMode.Rotate => CameraInitialPositionRotateMode,
+                CameraMode.Fly => CameraInitialPositionFlyMode,
+                _ => throw new ArgumentOutOfRangeException(),
+            };
+
+            _camera.transform.position = newPosition;
+            _camera.transform.LookAt(_mapCenterPosition);
         }
     }
 }
