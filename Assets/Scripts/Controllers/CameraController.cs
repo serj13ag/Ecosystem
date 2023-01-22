@@ -2,6 +2,7 @@ using System;
 using Enums;
 using Services;
 using UnityEngine;
+using static Constants;
 
 namespace Controllers
 {
@@ -20,7 +21,7 @@ namespace Controllers
         {
             _inputService = inputService;
 
-            _mapCenterPosition = new Vector3(Constants.MapSize / 2f, 0, Constants.MapSize / 2f);
+            _mapCenterPosition = new Vector3(MapSize / 2f, 0, MapSize / 2f);
             _cameraModes = new[] { CameraMode.Rotate, CameraMode.Fly };
 
             CurrentMode = CameraMode.Rotate;
@@ -61,54 +62,89 @@ namespace Controllers
 
         private void HandleRotateModeUpdate()
         {
-            _camera.transform.RotateAround(_mapCenterPosition, Vector3.up,
-                Time.deltaTime * Constants.CameraRotationSpeed);
+            _camera.transform.RotateAround(_mapCenterPosition, Vector3.up, Time.deltaTime * CameraRotationSpeed);
         }
 
         private void HandleFlyModeUpdate()
         {
-            Transform cameraTransform = _camera.transform;
-
             if (_inputService.RightMouseButtonPressed)
             {
                 Vector2 mouseAxis = _inputService.GetMouseAxis();
-
-                Vector3 cameraTransformPosition = cameraTransform.position;
-                cameraTransform.RotateAround(cameraTransformPosition, Vector3.down, -mouseAxis.x);
-                cameraTransform.RotateAround(cameraTransformPosition, cameraTransform.right, -mouseAxis.y);
+                if (mouseAxis != Vector2.zero)
+                {
+                    RotateCamera(mouseAxis);
+                }
             }
 
             Vector3 moveAxis = _inputService.GetMoveAxis();
-            cameraTransform.Translate(new Vector3(moveAxis.x, moveAxis.y, moveAxis.z));
+            if (moveAxis != Vector3.zero)
+            {
+                MoveCamera(moveAxis);
+            }
+        }
 
-            Vector3 cameraPosition = cameraTransform.position;
-            float posX = Mathf.Clamp(cameraPosition.x, -100f, 300f);
-            float posY = Mathf.Clamp(cameraPosition.y, 0f, 100f);
-            float posZ = Mathf.Clamp(cameraPosition.z, -100f, 300f);
+        private void RotateCamera(Vector2 mouseAxis)
+        {
+            Vector3 cameraTransformPosition = _camera.transform.position;
 
-            cameraTransform.position = new Vector3(posX, posY, posZ);
+            _camera.transform.RotateAround(cameraTransformPosition, Vector3.down, -mouseAxis.x);
+            _camera.transform.RotateAround(cameraTransformPosition, _camera.transform.right, -mouseAxis.y);
+        }
+
+        private void MoveCamera(Vector3 moveAxis)
+        {
+            Vector3 movement = CalculateMovement(_camera.transform, moveAxis);
+            Vector3 newPosition = _camera.transform.position + movement;
+
+            newPosition.y = Mathf.Max(newPosition.y, CameraMinPositionY);
+
+            Vector3 offsetFromCenter = newPosition - _mapCenterPosition;
+            _camera.transform.position = _mapCenterPosition +
+                                         Vector3.ClampMagnitude(offsetFromCenter, CameraMaxDistanceFromCenter);
+        }
+
+        private Vector3 CalculateMovement(Transform cameraTransform, Vector3 moveAxis)
+        {
+            Vector3 movement = Vector3.zero;
+
+            if (moveAxis.x != 0)
+            {
+                movement += cameraTransform.right * moveAxis.x;
+            }
+
+            if (moveAxis.y != 0)
+            {
+                movement += Vector3.up * moveAxis.y;
+            }
+
+            if (moveAxis.z != 0)
+            {
+                movement += cameraTransform.forward * moveAxis.z;
+            }
+
+            return movement;
         }
 
         private void UpdateFieldOfView()
         {
             _camera.fieldOfView = CurrentMode switch
             {
-                CameraMode.Rotate => Constants.CameraRotateFieldOfView,
-                CameraMode.Fly => Constants.CameraFlyFieldOfView,
+                CameraMode.Rotate => CameraRotateFieldOfView,
+                CameraMode.Fly => CameraFlyFieldOfView,
                 _ => throw new ArgumentOutOfRangeException(),
             };
         }
 
         private void ResetPositionAndRotation()
         {
-            Vector3 position = CurrentMode switch
+            Vector3 newPosition = CurrentMode switch
             {
-                CameraMode.Rotate => Constants.CameraInitialPositionRotateMode,
-                CameraMode.Fly => Constants.CameraInitialPositionFlyMode,
+                CameraMode.Rotate => CameraInitialPositionRotateMode,
+                CameraMode.Fly => CameraInitialPositionFlyMode,
                 _ => throw new ArgumentOutOfRangeException(),
             };
 
-            _camera.transform.position = position;
+            _camera.transform.position = newPosition;
             _camera.transform.LookAt(_mapCenterPosition);
         }
     }
