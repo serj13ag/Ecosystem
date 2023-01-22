@@ -15,6 +15,7 @@ namespace Controllers
         [SerializeField] private TreesController _treesController;
 
         private LocalStorageService _localStorageService;
+        private InputService _inputService;
         private MapService _mapService;
         private TreeService _treeService;
 
@@ -23,8 +24,11 @@ namespace Controllers
         private void Awake()
         {
             _localStorageService = new LocalStorageService();
+            _inputService = new InputService();
             _mapService = new MapService();
             _treeService = new TreeService();
+
+            _cameraController.Init(_inputService);
 
             _mapSettingsWindow.Init(this, _localStorageService);
             _cameraModeWindow.Init(_cameraController);

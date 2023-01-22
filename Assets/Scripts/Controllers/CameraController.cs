@@ -1,5 +1,6 @@
 using System;
 using Enums;
+using Services;
 using UnityEngine;
 
 namespace Controllers
@@ -9,6 +10,8 @@ namespace Controllers
         [SerializeField] private Camera _camera;
         [SerializeField] private float _speed;
 
+        private InputService _inputService;
+
         private Vector3 _mapCenterPosition;
         private CameraMode[] _cameraModes;
 
@@ -17,14 +20,13 @@ namespace Controllers
 
         public CameraMode CurrentMode { get; private set; }
 
-        private void Awake()
+        public void Init(InputService inputService)
         {
+            _inputService = inputService;
+
             _mapCenterPosition = new Vector3(Constants.MapSize / 2f, 0, Constants.MapSize / 2f);
             _cameraModes = new[] { CameraMode.Rotate, CameraMode.Fly };
-        }
 
-        private void Start()
-        {
             _camera.transform.LookAt(_mapCenterPosition);
 
             _cameraInitialPosition = _camera.transform.position;
@@ -35,12 +37,23 @@ namespace Controllers
 
         private void Update()
         {
+            Transform cameraTransform = _camera.transform;
+
             switch (CurrentMode)
             {
                 case CameraMode.Rotate:
-                    _camera.transform.RotateAround(_mapCenterPosition, Vector3.up, Time.deltaTime * _speed);
+                    cameraTransform.RotateAround(_mapCenterPosition, Vector3.up, Time.deltaTime * _speed);
                     break;
                 case CameraMode.Fly:
+                    if (_inputService.RightMouseButtonPressed)
+                    {
+                        Vector2 mouseAxis = _inputService.GetMouseAxis();
+
+                        Vector3 cameraTransformPosition = cameraTransform.position;
+                        cameraTransform.RotateAround(cameraTransformPosition, Vector3.down, -mouseAxis.x);
+                        cameraTransform.RotateAround(cameraTransformPosition, cameraTransform.right, -mouseAxis.y);
+                    }
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
