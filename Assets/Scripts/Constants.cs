@@ -19,4 +19,7 @@
     public const float ShallowLowerHeight = 0.45f;
     public const float ShallowHigherHeight = 0.5f;
     public const float ShallowUV = 0.49f;
+
+    public const float CameraRotateFieldOfView = 15f;
+    public const float CameraFlyFieldOfView = 30f;
 }

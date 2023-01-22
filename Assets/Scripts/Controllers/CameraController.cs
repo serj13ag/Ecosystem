@@ -33,6 +33,8 @@ namespace Controllers
             _cameraInitialRotation = _camera.transform.rotation;
 
             CurrentMode = CameraMode.Rotate;
+
+            UpdateFieldOfView();
         }
 
         private void Update()
@@ -54,6 +56,10 @@ namespace Controllers
                         cameraTransform.RotateAround(cameraTransformPosition, cameraTransform.right, -mouseAxis.y);
                     }
 
+                    Vector2 moveAxis = _inputService.GetMoveAxis();
+
+                    cameraTransform.Translate(new Vector3(moveAxis.x, 0, moveAxis.y));
+
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -73,6 +79,23 @@ namespace Controllers
 
             _camera.transform.position = _cameraInitialPosition;
             _camera.transform.rotation = _cameraInitialRotation;
+
+            UpdateFieldOfView();
+        }
+
+        private void UpdateFieldOfView()
+        {
+            switch (CurrentMode)
+            {
+                case CameraMode.Rotate:
+                    _camera.fieldOfView = Constants.CameraRotateFieldOfView;
+                    break;
+                case CameraMode.Fly:
+                    _camera.fieldOfView = Constants.CameraFlyFieldOfView;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }

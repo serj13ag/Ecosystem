@@ -10,5 +10,10 @@ namespace Services
         {
             return new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
         }
+
+        public Vector2 GetMoveAxis()
+        {
+            return new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
+        }
     }
 }
