@@ -6,45 +6,62 @@ namespace Controllers
 {
     public class TreesController : MonoBehaviour
     {
-        [SerializeField] private GameObject[] _treePrefabs;
-        [SerializeField] private Transform _treesContainer;
+        private const int DrawMeshInstancedMaxMatricesAmount = 1023;
 
-        private List<GameObject> _spawnedTreePrefabs;
+        [SerializeField] private Mesh _treeMesh;
+        [SerializeField] private Material[] _subMeshMaterials;
+
+        private List<List<Matrix4x4>> _drawInstances;
 
         private void Awake()
         {
-            _spawnedTreePrefabs = new List<GameObject>();
+            _drawInstances = new List<List<Matrix4x4>>();
+        }
+
+        private void Update()
+        {
+            RenderInstances();
         }
 
         public void UpdateTrees(HashSet<Vector2Int> treePositions)
         {
-            if (_spawnedTreePrefabs.Any())
+            if (_drawInstances.Any())
             {
-                ResetTrees();
+                _drawInstances.Clear();
             }
+
+            CreateDrawInstances(treePositions);
+        }
+
+        private void RenderInstances()
+        {
+            foreach (List<Matrix4x4> transformMatrices in _drawInstances)
+            {
+                for (var i = 0; i < _treeMesh.subMeshCount; i++)
+                {
+                    Graphics.DrawMeshInstanced(_treeMesh, i, _subMeshMaterials[i], transformMatrices);
+                }
+            }
+        }
+
+        private void CreateDrawInstances(HashSet<Vector2Int> treePositions)
+        {
+            _drawInstances.Add(new List<Matrix4x4>());
+            var addedMatrices = 0;
 
             foreach (Vector2Int treePosition in treePositions)
             {
-                var position = new Vector3(treePosition.x, Constants.TerrainPositionY, treePosition.y);
-                GameObject tree = Instantiate(GetRandomTreePrefab(), position, Quaternion.identity, _treesContainer);
+                if (addedMatrices >= DrawMeshInstancedMaxMatricesAmount)
+                {
+                    _drawInstances.Add(new List<Matrix4x4>());
+                    addedMatrices = 0;
+                }
 
-                _spawnedTreePrefabs.Add(tree);
+                var position = new Vector3(treePosition.x, Constants.TerrainPositionY + 1, treePosition.y);
+                _drawInstances[^1].Add(Matrix4x4.TRS(position, Quaternion.identity, Vector3.one));
+
+                addedMatrices++;
             }
-        }
-
-        private GameObject GetRandomTreePrefab()
-        {
-            return _treePrefabs[Random.Range(0, _treePrefabs.Length)];
-        }
-
-        private void ResetTrees()
-        {
-            foreach (GameObject tree in _spawnedTreePrefabs.ToArray())
-            {
-                Destroy(tree);
-            }
-
-            _spawnedTreePrefabs.Clear();
         }
     }
 }
