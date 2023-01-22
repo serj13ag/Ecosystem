@@ -27,6 +27,8 @@ public static class Constants
     public const float CameraRotationSpeed = 10f;
     public const float CameraMinPositionY = 0f;
     public const float CameraMaxDistanceFromCenter = 300f;
+    public const float CameraFlySpeed = 30f;
+    public const float CameraFlySpeedWithShift = 100f;
 
     public static Vector3 CameraInitialPositionRotateMode => new Vector3(-300, 300, -300);
     public static Vector3 CameraInitialPositionFlyMode => new Vector3(-100, 100, -100);

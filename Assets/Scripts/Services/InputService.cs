@@ -5,6 +5,7 @@ namespace Services
     public class InputService
     {
         public bool RightMouseButtonPressed => Input.GetMouseButton(1);
+        public bool ShiftPressed => Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
 
         public Vector2 GetMouseAxis()
         {

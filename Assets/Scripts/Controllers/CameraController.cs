@@ -107,19 +107,21 @@ namespace Controllers
         {
             Vector3 movement = Vector3.zero;
 
+            float cameraSpeed = _inputService.ShiftPressed ? CameraFlySpeedWithShift : CameraFlySpeed;
+
             if (moveAxis.x != 0)
             {
-                movement += cameraTransform.right * moveAxis.x;
+                movement += cameraTransform.right * (moveAxis.x * Time.deltaTime * cameraSpeed);
             }
 
             if (moveAxis.y != 0)
             {
-                movement += Vector3.up * moveAxis.y;
+                movement += Vector3.up * (moveAxis.y * Time.deltaTime * cameraSpeed);
             }
 
             if (moveAxis.z != 0)
             {
-                movement += cameraTransform.forward * moveAxis.z;
+                movement += cameraTransform.forward * (moveAxis.z * Time.deltaTime * cameraSpeed);
             }
 
             return movement;
