@@ -1,5 +1,4 @@
-using System;
-using Controllers;
+using Controllers.Camera;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,8 +24,8 @@ namespace UI
 
         private void SwitchCameraMode()
         {
-            _cameraController.SwitchMode();
-            _title.text = _cameraController.CurrentMode.ToString();
+            _cameraController.SwitchToNextMode();
+            _title.text = _cameraController.CameraBehaviourMode.ToString();
         }
 
         private void OnDisable()
