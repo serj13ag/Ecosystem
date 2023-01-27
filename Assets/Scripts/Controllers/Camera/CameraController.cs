@@ -15,9 +15,9 @@ namespace Controllers.Camera
         private Vector3 _mapCenterPosition;
         private CameraMode[] _cameraModes;
 
-        private ICameraBehaviour _currentCameraBehaviour;
+        private ICameraBehaviour _cameraBehaviour;
 
-        public CameraMode CameraBehaviourMode => _currentCameraBehaviour.Mode;
+        public CameraMode CameraBehaviourMode => _cameraBehaviour.Mode;
 
         public void Init(InputService inputService)
         {
@@ -26,35 +26,35 @@ namespace Controllers.Camera
             _mapCenterPosition = new Vector3(MapSize / 2f, 0, MapSize / 2f);
             _cameraModes = new[] { CameraMode.Rotate, CameraMode.Fly };
 
-            ChangeCurrentCameraBehaviour(CameraMode.Rotate);
+            ChangeCameraBehaviour(CameraMode.Rotate);
         }
 
         private void Update()
         {
-            _currentCameraBehaviour.Update(Time.deltaTime);
+            _cameraBehaviour.Update(Time.deltaTime);
         }
 
         public void SwitchToNextMode()
         {
-            CameraMode currentMode = _currentCameraBehaviour.Mode;
+            CameraMode currentMode = _cameraBehaviour.Mode;
 
             CameraMode newCameraMode = (int)currentMode < _cameraModes.Length - 1
                 ? currentMode + 1
                 : 0;
 
-            ChangeCurrentCameraBehaviour(newCameraMode);
+            ChangeCameraBehaviour(newCameraMode);
         }
 
-        private void ChangeCurrentCameraBehaviour(CameraMode cameraMode)
+        private void ChangeCameraBehaviour(CameraMode cameraMode)
         {
-            if (_currentCameraBehaviour?.Mode == cameraMode)
+            if (_cameraBehaviour?.Mode == cameraMode)
             {
                 return;
             }
 
-            _currentCameraBehaviour = CreateCameraBehaviour(cameraMode);
+            _cameraBehaviour = CreateCameraBehaviour(cameraMode);
 
-            _currentCameraBehaviour.ResetCameraToInitialParameters();
+            _cameraBehaviour.ResetCameraToInitialParameters();
         }
 
         private ICameraBehaviour CreateCameraBehaviour(CameraMode cameraMode)
