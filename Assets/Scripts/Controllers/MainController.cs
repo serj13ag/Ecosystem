@@ -46,7 +46,7 @@ namespace Controllers
             UpdateTrees(mapSettingsData.TreesPercentage);
         }
 
-        public void UpdateTrees(float treesPercentage)
+        private void UpdateTrees(float treesPercentage)
         {
             if (!_mapGenerated)
             {

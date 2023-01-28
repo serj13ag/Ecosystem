@@ -56,8 +56,7 @@ namespace Services
             return MapTiles
                 .Values
                 .Where(x => x.SuitableForPlants)
-                .Select(y => y.Position)
-                .ToArray();
+                .Select(y => y.Position);
         }
 
         private static float GeneratePerlinNoise(int row, int column, int seed, float scale)
