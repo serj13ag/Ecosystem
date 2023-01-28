@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b58daa00958476585ba253d7d4f7de0, type: 3}
+  m_Name: TreeMaple
+  m_EditorClassIdentifier: 
+  Mesh: {fileID: -3727755857921736763, guid: 5c8b1a827fb0f484187fc642f5f6d850, type: 3}
+  SubMeshMaterials:
+  - {fileID: 2100000, guid: 6d507d570521015408ca9b6c5aec4bfa, type: 2}
+  - {fileID: 2100000, guid: 862c6d88668993d449843dddbb475fbd, type: 2}
+  - {fileID: 2100000, guid: 862c6d88668993d449843dddbb475fbd, type: 2}
+  - {fileID: 2100000, guid: 862c6d88668993d449843dddbb475fbd, type: 2}
+  Rotation: {x: -90, y: 0, z: 0}
+  PivotOffsetY: 0
