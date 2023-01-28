@@ -30,6 +30,10 @@ public static class Constants
     public const float CameraFlySpeed = 30f;
     public const float CameraFlySpeedWithShift = 100f;
 
+    public const float TreeMeshScaleMin = 0.8f;
+    public const float TreeMeshScaleMax = 1.2f;
+    public const int TreeMeshMaxRotationAngle = 360;
+
     public static Vector3 CameraInitialPositionRotateMode => new Vector3(-300, 300, -300);
     public static Vector3 CameraInitialPositionFlyMode => new Vector3(-100, 100, -100);
 }

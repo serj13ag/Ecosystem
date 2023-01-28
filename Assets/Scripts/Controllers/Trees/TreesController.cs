@@ -70,7 +70,7 @@ namespace Controllers.Trees
         private void AddPositionToRandomDrawMeshInstance(Vector3 position)
         {
             int randomInstanceIndex = Random.Range(0, _drawMeshInstances.Count);
-            _drawMeshInstances[randomInstanceIndex].AddPositionToMatrices(position);
+            _drawMeshInstances[randomInstanceIndex].AddMatrix(position);
         }
     }
 }

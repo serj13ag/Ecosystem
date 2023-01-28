@@ -31,12 +31,11 @@ namespace Controllers.Trees
             AddNewMatricesSet();
         }
 
-        public void AddPositionToMatrices(Vector3 position)
+        public void AddMatrix(Vector3 initialPosition)
         {
             List<Matrix4x4> matricesSet = _matricesSets[^1];
 
-            Vector3 modelPosition = new Vector3(position.x, position.y + _drawModel.PivotOffsetY, position.z);
-            Matrix4x4 matrix = Matrix4x4.TRS(modelPosition, Quaternion.Euler(_drawModel.Rotation), Vector3.one);
+            Matrix4x4 matrix = CreateTransformMatrix(initialPosition);
 
             matricesSet.Add(matrix);
 
@@ -44,6 +43,37 @@ namespace Controllers.Trees
             {
                 AddNewMatricesSet();
             }
+        }
+
+        private Matrix4x4 CreateTransformMatrix(Vector3 initialPosition)
+        {
+            Vector3 position = new Vector3(
+                initialPosition.x,
+                initialPosition.y + _drawModel.PivotOffsetY,
+                initialPosition.z);
+
+            Quaternion rotation = GetRandomRotation(_drawModel.Rotation);
+            Vector3 scale = GetRandomScale();
+
+            return Matrix4x4.TRS(position, rotation, scale);
+        }
+
+        private Quaternion GetRandomRotation(Vector3 drawModelRotation)
+        {
+            Quaternion modelRotation = Quaternion.Euler(drawModelRotation);
+
+            int randomAngle = Random.Range(0, Constants.TreeMeshMaxRotationAngle);
+            Vector3 modelRotationAxis = modelRotation * Vector3.up;
+
+            modelRotation *= Quaternion.AngleAxis(randomAngle, modelRotationAxis);
+            return modelRotation;
+        }
+
+        private Vector3 GetRandomScale()
+        {
+            float randomScale = Random.Range(Constants.TreeMeshScaleMin, Constants.TreeMeshScaleMax);
+
+            return new Vector3(randomScale, randomScale, randomScale);
         }
 
         private void AddNewMatricesSet()
