@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Map;
 using Prefabs;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace Controllers
 {
@@ -29,10 +30,10 @@ namespace Controllers
 
         private void CreateTerrain(Dictionary<Vector2Int, Tile> mapTiles)
         {
-            var vertices = new List<Vector3>();
-            var uvs = new List<Vector2>();
-            var triangles = new List<int>();
-            var normals = new List<Vector3>();
+            var vertices = ListPool<Vector3>.Get();
+            var uvs = ListPool<Vector2>.Get();
+            var triangles = ListPool<int>.Get();
+            var normals = ListPool<Vector3>.Get();
 
             foreach (Tile mapTile in mapTiles.Values)
             {
@@ -54,19 +55,24 @@ namespace Controllers
                     Vector2Int sideDirection = _sideDirections[sideDirectionIndex];
                     Vector2Int neighbourPosition = GetNeighbourPosition(mapTile, sideDirection);
 
-                    Vector3[] tileTopVertices = GetTileTopVertices(mapTile);
-
-                    if (mapTile.Walkable && mapTiles.TryGetValue(neighbourPosition, out Tile neighbourTile)
-                                         && !neighbourTile.Walkable)
+                    if (mapTile.Walkable && !NeighbourOutOfBounds(neighbourPosition))
                     {
-                        triangles.AddRange(GetTileFaceTriangles(vertices.Count));
-                        vertices.AddRange(GetTileSideVertices(sideDirectionIndex, tileTopVertices, Constants.TerrainWaterPositionY));
-                        uvs.AddRange(GetTileFaceUVs(mapTileUV));
-                        normals.AddRange(GetTileSideNormals(sideDirection));
+                        Tile neighbourTile = mapTiles[neighbourPosition];
+                        if (!neighbourTile.Walkable)
+                        {
+                            Vector3[] tileTopVertices = GetTileTopVertices(mapTile);
+
+                            triangles.AddRange(GetTileFaceTriangles(vertices.Count));
+                            vertices.AddRange(GetTileSideVertices(sideDirectionIndex, tileTopVertices, Constants.TerrainWaterPositionY));
+                            uvs.AddRange(GetTileFaceUVs(mapTileUV));
+                            normals.AddRange(GetTileSideNormals(sideDirection));
+                        }
                     }
 
                     if (mapTile.OnBorder && NeighbourOutOfBounds(neighbourPosition))
                     {
+                        Vector3[] tileTopVertices = GetTileTopVertices(mapTile);
+
                         triangles.AddRange(GetTileFaceTriangles(vertices.Count));
                         vertices.AddRange(GetTileSideVertices(sideDirectionIndex, tileTopVertices, Constants.BorderSideBottomPositionY));
                         uvs.AddRange(GetTileFaceUVs(mapTileUV));
@@ -76,17 +82,22 @@ namespace Controllers
             }
 
             _terrain.UpdateMesh(vertices, triangles, uvs, normals);
+
+            ListPool<Vector3>.Release(vertices);
+            ListPool<Vector2>.Release(uvs);
+            ListPool<int>.Release(triangles);
+            ListPool<Vector3>.Release(normals);
         }
 
         private Vector3[] GetTileTopVertices(Tile mapTile)
         {
-            Vector3 leftBottomVertex = new(
+            Vector3 leftBottomVertex = new Vector3(
                 StartVertex + mapTile.Position.x,
                 GetTileHeight(mapTile),
                 StartVertex + mapTile.Position.y);
-            Vector3 leftTopVertex = leftBottomVertex + Vector3.forward;
-            Vector3 rightTopVertex = leftTopVertex + Vector3.right;
-            Vector3 rightBottomVertex = leftBottomVertex + Vector3.right;
+            Vector3 leftTopVertex = new Vector3(leftBottomVertex.x, leftBottomVertex.y, leftBottomVertex.z + 1);
+            Vector3 rightTopVertex = new Vector3(leftTopVertex.x + 1, leftTopVertex.y, leftTopVertex.z);
+            Vector3 rightBottomVertex = new Vector3(leftBottomVertex.x + 1, leftBottomVertex.y, leftBottomVertex.z);
 
             return new[] { leftBottomVertex, leftTopVertex, rightTopVertex, rightBottomVertex };
         }
