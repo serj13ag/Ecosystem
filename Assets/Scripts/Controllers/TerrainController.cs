@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Data;
+using Extensions;
 using Map;
 using Prefabs;
 using UnityEngine;
@@ -36,11 +37,11 @@ namespace Controllers
 
             foreach (Tile mapTile in mapTiles.Values)
             {
-                triangles.AddRange(GetTileFaceTriangles(vertices.Count));
+                triangles.AddTileFaceTriangles(vertices.Count);
                 vertices.AddRange(GetTileTopVertices(mapTile));
 
                 Vector2 mapTileUV = GetMapTileUV(mapTile);
-                uvs.AddRange(GetTileFaceUVs(mapTileUV));
+                uvs.AddTileFaceUVs(mapTileUV);
 
                 normals.AddRange(TileTopNormals);
 
@@ -61,9 +62,9 @@ namespace Controllers
                         {
                             Vector3[] tileTopVertices = GetTileTopVertices(mapTile);
 
-                            triangles.AddRange(GetTileFaceTriangles(vertices.Count));
+                            triangles.AddTileFaceTriangles(vertices.Count);
                             vertices.AddRange(GetTileSideVertices(sideDirectionIndex, tileTopVertices, Constants.TerrainWaterPositionY));
-                            uvs.AddRange(GetTileFaceUVs(mapTileUV));
+                            uvs.AddTileFaceUVs(mapTileUV);
                             normals.AddRange(GetTileSideNormals(sideDirection));
                         }
                     }
@@ -72,9 +73,9 @@ namespace Controllers
                     {
                         Vector3[] tileTopVertices = GetTileTopVertices(mapTile);
 
-                        triangles.AddRange(GetTileFaceTriangles(vertices.Count));
+                        triangles.AddTileFaceTriangles(vertices.Count);
                         vertices.AddRange(GetTileSideVertices(sideDirectionIndex, tileTopVertices, Constants.BorderSideBottomPositionY));
-                        uvs.AddRange(GetTileFaceUVs(mapTileUV));
+                        uvs.AddTileFaceUVs(mapTileUV);
                         normals.AddRange(GetTileSideNormals(sideDirection));
                     }
                 }
@@ -144,20 +145,6 @@ namespace Controllers
         {
             return tilePosition.X < 0 || tilePosition.X >= Constants.MapSize ||
                    tilePosition.Y < 0 || tilePosition.Y >= Constants.MapSize;
-        }
-
-        private static IEnumerable<int> GetTileFaceTriangles(int vertexIndex)
-        {
-            return new[]
-            {
-                vertexIndex, vertexIndex + 1, vertexIndex + 2,
-                vertexIndex, vertexIndex + 2, vertexIndex + 3,
-            };
-        }
-
-        private static IEnumerable<Vector2> GetTileFaceUVs(Vector2 uv)
-        {
-            return new[] { uv, uv, uv, uv };
         }
 
         private static float GetTileHeight(Tile mapTile)
