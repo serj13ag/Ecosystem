@@ -1,34 +1,35 @@
 ﻿using System.Collections.Generic;
+using Data;
 using UnityEngine;
 
 namespace Services
 {
     public class TreeService
     {
-        public HashSet<Vector2Int> TreePositions { get; }
+        public HashSet<Point> TreePositions { get; }
 
         public TreeService()
         {
-            TreePositions = new HashSet<Vector2Int>();
+            TreePositions = new HashSet<Point>();
         }
 
-        public void GenerateTrees(float treesPercentage, Vector2Int[] mapLandTilePositions)
+        public void GenerateTrees(float treesPercentage, IEnumerable<Point> mapLandTilePositions)
         {
             TreePositions.Clear();
 
             CreateTrees(treesPercentage, mapLandTilePositions);
         }
 
-        private void CreateTrees(float treesPercentageValue, Vector2Int[] landTilesPositions)
+        private void CreateTrees(float treesPercentageValue, IEnumerable<Point> landTilesPositions)
         {
-            foreach (Vector2Int landTilesPosition in landTilesPositions)
+            foreach (Point landTilesPosition in landTilesPositions)
             {
                 if (Random.Range(0, 101) >= treesPercentageValue)
                 {
                     continue;
                 }
 
-                TreePositions.Add(new Vector2Int(landTilesPosition.x, landTilesPosition.y));
+                TreePositions.Add(landTilesPosition);
             }
         }
     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Data;
 using Map;
 using Prefabs;
 using UnityEngine;
@@ -12,28 +13,26 @@ namespace Controllers
 
         [SerializeField] private TerrainPrefab _terrain;
 
-        private readonly Vector3[] _tileTopNormals = { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
+        private static readonly Vector3[] TileTopNormals = { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
+        private static readonly Point[] SideDirections = { Point.Left, Point.Up, Point.Right, Point.Down };
 
-        private readonly Vector2Int[] _sideDirections =
-            { Vector2Int.left, Vector2Int.up, Vector2Int.right, Vector2Int.down };
-
-        private readonly int[][] _sideVertexIndexByDirection =
+        private static readonly int[][] SideVertexIndexByDirection =
         {
             new[] { 0, 1 }, new[] { 1, 2 },
             new[] { 2, 3 }, new[] { 3, 0 },
         };
 
-        public void UpdateMap(Dictionary<Vector2Int, Tile> mapTiles)
+        public void UpdateMap(Dictionary<Point, Tile> mapTiles)
         {
             CreateTerrain(mapTiles);
         }
 
-        private void CreateTerrain(Dictionary<Vector2Int, Tile> mapTiles)
+        private void CreateTerrain(Dictionary<Point, Tile> mapTiles)
         {
-            var vertices = ListPool<Vector3>.Get();
-            var uvs = ListPool<Vector2>.Get();
-            var triangles = ListPool<int>.Get();
-            var normals = ListPool<Vector3>.Get();
+            List<Vector3> vertices = ListPool<Vector3>.Get();
+            List<Vector2> uvs = ListPool<Vector2>.Get();
+            List<int> triangles = ListPool<int>.Get();
+            List<Vector3> normals = ListPool<Vector3>.Get();
 
             foreach (Tile mapTile in mapTiles.Values)
             {
@@ -43,17 +42,17 @@ namespace Controllers
                 Vector2 mapTileUV = GetMapTileUV(mapTile);
                 uvs.AddRange(GetTileFaceUVs(mapTileUV));
 
-                normals.AddRange(_tileTopNormals);
+                normals.AddRange(TileTopNormals);
 
                 if (!mapTile.Walkable && !mapTile.OnBorder)
                 {
                     continue;
                 }
 
-                for (var sideDirectionIndex = 0; sideDirectionIndex < _sideDirections.Length; sideDirectionIndex++)
+                for (var sideDirectionIndex = 0; sideDirectionIndex < SideDirections.Length; sideDirectionIndex++)
                 {
-                    Vector2Int sideDirection = _sideDirections[sideDirectionIndex];
-                    Vector2Int neighbourPosition = GetNeighbourPosition(mapTile, sideDirection);
+                    Point sideDirection = SideDirections[sideDirectionIndex];
+                    Point neighbourPosition = GetNeighbourPosition(mapTile, sideDirection);
 
                     if (mapTile.Walkable && !NeighbourOutOfBounds(neighbourPosition))
                     {
@@ -89,23 +88,24 @@ namespace Controllers
             ListPool<Vector3>.Release(normals);
         }
 
-        private Vector3[] GetTileTopVertices(Tile mapTile)
+        private static Vector3[] GetTileTopVertices(Tile mapTile)
         {
             Vector3 leftBottomVertex = new Vector3(
-                StartVertex + mapTile.Position.x,
+                StartVertex + mapTile.Position.X,
                 GetTileHeight(mapTile),
-                StartVertex + mapTile.Position.y);
-            Vector3 leftTopVertex = new Vector3(leftBottomVertex.x, leftBottomVertex.y, leftBottomVertex.z + 1);
-            Vector3 rightTopVertex = new Vector3(leftTopVertex.x + 1, leftTopVertex.y, leftTopVertex.z);
-            Vector3 rightBottomVertex = new Vector3(leftBottomVertex.x + 1, leftBottomVertex.y, leftBottomVertex.z);
+                StartVertex + mapTile.Position.Y);
+            Vector3 leftTopVertex = leftBottomVertex + Vector3.forward;
+            Vector3 rightTopVertex = leftTopVertex + Vector3.right;
+            Vector3 rightBottomVertex = leftBottomVertex + Vector3.right;
 
             return new[] { leftBottomVertex, leftTopVertex, rightTopVertex, rightBottomVertex };
         }
 
-        private Vector3[] GetTileSideVertices(int sideDirectionIndex, Vector3[] tileTopVertices, float bottomPositionY)
+        private static IEnumerable<Vector3> GetTileSideVertices(int sideDirectionIndex, Vector3[] tileTopVertices,
+            float bottomPositionY)
         {
-            int edgeVertexIndexA = _sideVertexIndexByDirection[sideDirectionIndex][0];
-            int edgeVertexIndexB = _sideVertexIndexByDirection[sideDirectionIndex][1];
+            int edgeVertexIndexA = SideVertexIndexByDirection[sideDirectionIndex][0];
+            int edgeVertexIndexB = SideVertexIndexByDirection[sideDirectionIndex][1];
 
             Vector3 leftBottomVertex = new Vector3(
                 tileTopVertices[edgeVertexIndexB].x,
@@ -121,32 +121,32 @@ namespace Controllers
             return new[] { leftBottomVertex, leftTopVertex, rightTopVertex, rightBottomVertex };
         }
 
-        private Vector3[] GetTileSideNormals(Vector2Int sideNormal)
+        private static IEnumerable<Vector3> GetTileSideNormals(Point sideNormal)
         {
             return new Vector3[]
             {
-                new(sideNormal.x, 0f, sideNormal.y),
-                new(sideNormal.x, 0f, sideNormal.y),
-                new(sideNormal.x, 0f, sideNormal.y),
-                new(sideNormal.x, 0f, sideNormal.y),
+                new(sideNormal.X, 0f, sideNormal.Y),
+                new(sideNormal.X, 0f, sideNormal.Y),
+                new(sideNormal.X, 0f, sideNormal.Y),
+                new(sideNormal.X, 0f, sideNormal.Y),
             };
         }
 
-        private Vector2Int GetNeighbourPosition(Tile mapTile, Vector2Int sideDirection)
+        private static Point GetNeighbourPosition(Tile mapTile, Point sideDirection)
         {
-            int neighbourPositionX = mapTile.Position.x + sideDirection.x;
-            int neighbourPositionY = mapTile.Position.y + sideDirection.y;
+            int neighbourPositionX = mapTile.Position.X + sideDirection.X;
+            int neighbourPositionY = mapTile.Position.Y + sideDirection.Y;
 
-            return new Vector2Int(neighbourPositionX, neighbourPositionY);
+            return new Point(neighbourPositionX, neighbourPositionY);
         }
 
-        private bool NeighbourOutOfBounds(Vector2Int tilePosition)
+        private static bool NeighbourOutOfBounds(Point tilePosition)
         {
-            return tilePosition.x < 0 || tilePosition.x >= Constants.MapSize ||
-                   tilePosition.y < 0 || tilePosition.y >= Constants.MapSize;
+            return tilePosition.X < 0 || tilePosition.X >= Constants.MapSize ||
+                   tilePosition.Y < 0 || tilePosition.Y >= Constants.MapSize;
         }
 
-        private static int[] GetTileFaceTriangles(int vertexIndex)
+        private static IEnumerable<int> GetTileFaceTriangles(int vertexIndex)
         {
             return new[]
             {
@@ -155,7 +155,7 @@ namespace Controllers
             };
         }
 
-        private static Vector2[] GetTileFaceUVs(Vector2 uv)
+        private static IEnumerable<Vector2> GetTileFaceUVs(Vector2 uv)
         {
             return new[] { uv, uv, uv, uv };
         }

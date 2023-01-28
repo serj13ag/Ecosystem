@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Data;
 using Models;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -21,7 +22,7 @@ namespace Controllers.Trees
             RenderDrawMeshInstances();
         }
 
-        public void UpdateTrees(HashSet<Vector2Int> treePositions)
+        public void UpdateTrees(HashSet<Point> treePositions)
         {
             UpdateDrawMeshInstances(treePositions);
         }
@@ -53,16 +54,16 @@ namespace Controllers.Trees
             }
         }
 
-        private void UpdateDrawMeshInstances(HashSet<Vector2Int> treePositions)
+        private void UpdateDrawMeshInstances(HashSet<Point> treePositions)
         {
             foreach (DrawMeshInstance drawMeshInstance in _drawMeshInstances)
             {
                 drawMeshInstance.ClearMatricesSets();
             }
 
-            foreach (Vector2Int treePosition in treePositions)
+            foreach (Point treePosition in treePositions)
             {
-                Vector3 position = new Vector3(treePosition.x, Constants.TerrainPositionY, treePosition.y);
+                Vector3 position = new Vector3(treePosition.X, Constants.TerrainPositionY, treePosition.Y);
                 AddPositionToRandomDrawMeshInstance(position);
             }
         }

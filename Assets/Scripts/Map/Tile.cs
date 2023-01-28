@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+﻿using Data;
 
 namespace Map
 {
     public class Tile
     {
-        public Vector2Int Position { get; }
+        public Point Position { get; }
         public float Height { get; }
         public bool OnBorder { get; }
 
@@ -12,7 +12,7 @@ namespace Map
         public bool Walkable { get; }
         public bool IsShallow { get; }
 
-        public Tile(Vector2Int position, float height, bool onBorder, bool suitableForPlants, bool isWalkable)
+        public Tile(Point position, float height, bool onBorder, bool suitableForPlants, bool isWalkable)
         {
             Position = position;
             Height = height;
