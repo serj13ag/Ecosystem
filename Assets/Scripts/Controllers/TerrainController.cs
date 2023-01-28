@@ -38,7 +38,7 @@ namespace Controllers
             foreach (Tile mapTile in mapTiles.Values)
             {
                 triangles.AddTileFaceTriangles(vertices.Count);
-                vertices.AddRange(GetTileTopVertices(mapTile));
+                vertices.AddTileTopVertices(mapTile, StartVertex, GetTileHeight(mapTile));
 
                 Vector2 mapTileUV = GetMapTileUV(mapTile);
                 uvs.AddTileFaceUVs(mapTileUV);
