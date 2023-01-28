@@ -19,4 +19,4 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 862c6d88668993d449843dddbb475fbd, type: 2}
   - {fileID: 2100000, guid: 862c6d88668993d449843dddbb475fbd, type: 2}
   Rotation: {x: -90, y: 0, z: 0}
-  PivotOffsetY: 0
+  PivotOffsetY: -0.2
