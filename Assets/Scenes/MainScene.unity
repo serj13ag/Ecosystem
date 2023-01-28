@@ -599,10 +599,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f00077cfd1fa4b5cad1e9db8bf22da2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _treePrefabs:
-  - {fileID: 5248654683154543887, guid: 465c0444878d6594ebff3fd7a1904ed5, type: 3}
-  - {fileID: 5248654683154543887, guid: 9b587a7b7c48efe4eb96398f2411bec9, type: 3}
-  _treesContainer: {fileID: 912463224}
+  _drawMeshModels:
+  - {fileID: 11400000, guid: 4902cd40bd5e9e04fbad11989c2f074b, type: 2}
+  - {fileID: 11400000, guid: f8acfc327638c154580f2f108ad5db35, type: 2}
 --- !u!1 &1399189359
 GameObject:
   m_ObjectHideFlags: 0
