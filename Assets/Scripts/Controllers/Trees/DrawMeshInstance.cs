@@ -39,7 +39,7 @@ namespace Controllers.Trees
 
             matricesSet.Add(matrix);
 
-            if (matricesSet.Count >= DrawMeshInstancedMaxMatricesAmount)
+            if (matricesSet.Count >= matricesSet.Capacity)
             {
                 AddNewMatricesSet();
             }
@@ -58,7 +58,12 @@ namespace Controllers.Trees
             return Matrix4x4.TRS(position, rotation, scale);
         }
 
-        private Quaternion GetRandomRotation(Vector3 drawModelRotation)
+        private void AddNewMatricesSet()
+        {
+            _matricesSets.Add(new List<Matrix4x4>(DrawMeshInstancedMaxMatricesAmount));
+        }
+
+        private static Quaternion GetRandomRotation(Vector3 drawModelRotation)
         {
             Quaternion modelRotation = Quaternion.Euler(drawModelRotation);
 
@@ -69,16 +74,11 @@ namespace Controllers.Trees
             return modelRotation;
         }
 
-        private Vector3 GetRandomScale()
+        private static Vector3 GetRandomScale()
         {
             float randomScale = Random.Range(Constants.TreeMeshScaleMin, Constants.TreeMeshScaleMax);
 
             return new Vector3(randomScale, randomScale, randomScale);
-        }
-
-        private void AddNewMatricesSet()
-        {
-            _matricesSets.Add(new List<Matrix4x4>());
         }
     }
 }
