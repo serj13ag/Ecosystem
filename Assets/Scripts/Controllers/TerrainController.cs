@@ -14,7 +14,6 @@ namespace Controllers
 
         [SerializeField] private TerrainPrefab _terrain;
 
-        private static readonly Vector3[] TileTopNormals = { Vector3.up, Vector3.up, Vector3.up, Vector3.up };
         private static readonly Point[] SideDirections = { Point.Left, Point.Up, Point.Right, Point.Down };
 
         private static readonly int[][] SideVertexIndexByDirection =
@@ -43,7 +42,7 @@ namespace Controllers
                 Vector2 mapTileUV = GetMapTileUV(mapTile);
                 uvs.AddTileFaceUVs(mapTileUV);
 
-                normals.AddRange(TileTopNormals);
+                normals.AddTileTopNormals();
 
                 if (!mapTile.Walkable && !mapTile.OnBorder)
                 {
@@ -65,7 +64,7 @@ namespace Controllers
                             triangles.AddTileFaceTriangles(vertices.Count);
                             vertices.AddRange(GetTileSideVertices(sideDirectionIndex, tileTopVertices, Constants.TerrainWaterPositionY));
                             uvs.AddTileFaceUVs(mapTileUV);
-                            normals.AddRange(GetTileSideNormals(sideDirection));
+                            normals.AddTileSideNormals(sideDirection);
                         }
                     }
 
@@ -76,7 +75,7 @@ namespace Controllers
                         triangles.AddTileFaceTriangles(vertices.Count);
                         vertices.AddRange(GetTileSideVertices(sideDirectionIndex, tileTopVertices, Constants.BorderSideBottomPositionY));
                         uvs.AddTileFaceUVs(mapTileUV);
-                        normals.AddRange(GetTileSideNormals(sideDirection));
+                        normals.AddTileSideNormals(sideDirection);
                     }
                 }
             }
@@ -120,17 +119,6 @@ namespace Controllers
                 tileTopVertices[edgeVertexIndexA].z);
 
             return new[] { leftBottomVertex, leftTopVertex, rightTopVertex, rightBottomVertex };
-        }
-
-        private static IEnumerable<Vector3> GetTileSideNormals(Point sideNormal)
-        {
-            return new Vector3[]
-            {
-                new(sideNormal.X, 0f, sideNormal.Y),
-                new(sideNormal.X, 0f, sideNormal.Y),
-                new(sideNormal.X, 0f, sideNormal.Y),
-                new(sideNormal.X, 0f, sideNormal.Y),
-            };
         }
 
         private static Point GetNeighbourPosition(Tile mapTile, Point sideDirection)

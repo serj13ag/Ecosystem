@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using DataTypes;
 using Entities;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ namespace Extensions
     /// </summary>
     public static class TerrainExtensions
     {
+        private static readonly Vector3 TileTopNormal = Vector3.up;
+
         public static void AddTileFaceUVs(this List<Vector2> uvs, Vector2 uv)
         {
             for (var i = 0; i < 4; i++)
@@ -42,6 +45,24 @@ namespace Extensions
             vertices.Add(leftTopVertex);
             vertices.Add(rightTopVertex);
             vertices.Add(rightBottomVertex);
+        }
+
+        public static void AddTileTopNormals(this List<Vector3> normals)
+        {
+            for (var i = 0; i < 4; i++)
+            {
+                normals.Add(TileTopNormal);
+            }
+        }
+
+        public static void AddTileSideNormals(this List<Vector3> normals, Point sideNormal)
+        {
+            Vector3 tileSideNormal = new Vector3(sideNormal.X, 0f, sideNormal.Y);
+
+            for (var i = 0; i < 4; i++)
+            {
+                normals.Add(tileSideNormal);
+            }
         }
     }
 }
