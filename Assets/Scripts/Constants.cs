@@ -35,8 +35,8 @@ public static class Constants
     public const int TreeMeshScaleMaxPercentage = 120;
     public const int TreeMeshMaxRotationAngle = 360;
 
-    public static Vector3 CameraInitialPositionRotateMode => new Vector3(-300, 300, -300);
-    public static Vector3 CameraInitialPositionFlyMode => new Vector3(-100, 100, -100);
+    public static readonly Vector3 CameraInitialPositionRotateMode = new Vector3(-300, 300, -300);
+    public static readonly Vector3 CameraInitialPositionFlyMode = new Vector3(-100, 100, -100);
 
-    public static TreeType[] TreeTypes => new[] { TreeType.Maple, TreeType.Pine };
+    public static readonly TreeType[] TreeTypes = new[] { TreeType.Maple, TreeType.Pine };
 }

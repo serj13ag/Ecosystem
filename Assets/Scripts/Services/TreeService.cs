@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using Controllers;
-using Data;
+using DataTypes;
+using Entities;
 using Enums;
-using Map;
 using UnityEngine;
-using Tree = Map.Tree;
+using Tree = Entities.Tree;
 
 namespace Services
 {

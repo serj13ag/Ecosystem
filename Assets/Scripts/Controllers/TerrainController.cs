@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using Data;
+using DataTypes;
+using Entities;
 using Extensions;
-using Map;
 using Prefabs;
 using UnityEngine;
 using UnityEngine.Pool;

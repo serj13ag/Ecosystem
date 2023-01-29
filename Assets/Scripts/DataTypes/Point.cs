@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Data
+namespace DataTypes
 {
     public readonly struct Point : IEquatable<Point>
     {

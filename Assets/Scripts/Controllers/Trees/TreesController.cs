@@ -2,7 +2,7 @@
 using Enums;
 using Models;
 using UnityEngine;
-using Tree = Map.Tree;
+using Tree = Entities.Tree;
 
 namespace Controllers.Trees
 {

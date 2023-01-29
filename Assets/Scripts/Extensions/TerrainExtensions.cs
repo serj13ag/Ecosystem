@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Map;
+using Entities;
 using UnityEngine;
 
 namespace Extensions

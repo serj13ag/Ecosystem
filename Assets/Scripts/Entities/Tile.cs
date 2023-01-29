@@ -1,6 +1,6 @@
-﻿using Data;
+﻿using DataTypes;
 
-namespace Map
+namespace Entities
 {
     public class Tile
     {

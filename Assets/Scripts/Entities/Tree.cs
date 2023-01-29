@@ -1,7 +1,7 @@
 ﻿using Enums;
 using UnityEngine;
 
-namespace Map
+namespace Entities
 {
     public class Tree
     {

@@ -1,7 +1,7 @@
-﻿using Data;
+﻿using DataTypes;
 using Random = System.Random;
 
-namespace Controllers
+namespace Services
 {
     public class RandomService
     {

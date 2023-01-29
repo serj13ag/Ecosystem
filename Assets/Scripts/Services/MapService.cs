@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Controllers;
 using Data;
-using Map;
+using DataTypes;
+using Entities;
 using UnityEngine;
 using Random = System.Random;
 
