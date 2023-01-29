@@ -6,3 +6,6 @@ In camera fly mode hold RMB to activate controls.
 - Use WASD to fly
 - Use QE to elevate
 - Hold Shift to increase fly speed
+
+Videos:
+- https://youtu.be/ceZagsAB_a0
