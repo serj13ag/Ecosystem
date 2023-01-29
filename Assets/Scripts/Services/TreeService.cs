@@ -3,7 +3,6 @@ using DataTypes;
 using Entities;
 using Enums;
 using UnityEngine;
-using Tree = Entities.Tree;
 
 namespace Services
 {
@@ -11,13 +10,13 @@ namespace Services
     {
         private readonly RandomService _randomService;
 
-        public List<Tree> Trees { get; }
+        public List<TileTree> Trees { get; }
 
         public TreeService(RandomService randomService)
         {
             _randomService = randomService;
 
-            Trees = new List<Tree>();
+            Trees = new List<TileTree>();
         }
 
         public void GenerateTrees(IEnumerable<Tile> mapTiles)
@@ -38,7 +37,7 @@ namespace Services
                 int angleRotation = GetRandomRotation(treePosition);
                 Vector3 scale = GetRandomScale(treePosition);
 
-                Tree tree = new Tree(type, position, angleRotation, scale);
+                TileTree tree = new TileTree(type, position, angleRotation, scale);
 
                 Trees.Add(tree);
             }

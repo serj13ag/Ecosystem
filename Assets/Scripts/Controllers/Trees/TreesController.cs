@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
+using Entities;
 using Enums;
 using Models;
 using UnityEngine;
-using Tree = Entities.Tree;
 
 namespace Controllers.Trees
 {
@@ -22,7 +22,7 @@ namespace Controllers.Trees
             RenderDrawMeshInstances();
         }
 
-        public void UpdateTrees(IEnumerable<Tree> trees)
+        public void UpdateTrees(IEnumerable<TileTree> trees)
         {
             UpdateDrawMeshInstances(trees);
         }
@@ -54,14 +54,14 @@ namespace Controllers.Trees
             }
         }
 
-        private void UpdateDrawMeshInstances(IEnumerable<Tree> trees)
+        private void UpdateDrawMeshInstances(IEnumerable<TileTree> trees)
         {
             foreach (DrawMeshInstance drawMeshInstance in _drawMeshInstances.Values)
             {
                 drawMeshInstance.ClearMatricesSets();
             }
 
-            foreach (Tree tree in trees)
+            foreach (TileTree tree in trees)
             {
                 _drawMeshInstances[tree.Type].AddMatrix(tree.Position, tree.AngleRotation, tree.Scale);
             }
