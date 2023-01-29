@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using Controllers;
 using Data;
 using Map;
@@ -24,7 +22,7 @@ namespace Services
             MapTiles = new Dictionary<Point, Tile>();
         }
 
-        public void UpdateMap(MapSettingsData mapSettingsData)
+        public void GenerateMapTiles(MapSettingsData mapSettingsData)
         {
             MapTiles.Clear();
 
@@ -49,23 +47,11 @@ namespace Services
                     bool hasTree = random.Next(100) < mapSettingsData.TreesPercentage && suitableForPlants;
 
                     Point tilePosition = new Point(row, column);
-                    Tile tile = new Tile(tilePosition, tileActualHeight, onBorder, suitableForPlants, walkable, hasTree);
+                    Tile tile = new Tile(tilePosition, tileActualHeight, onBorder, suitableForPlants, walkable,
+                        hasTree);
                     MapTiles.Add(tilePosition, tile);
                 }
             }
-        }
-
-        public IEnumerable<Point> GetTilesWithTreesPositions()
-        {
-            if (MapTiles == null)
-            {
-                return Array.Empty<Point>();
-            }
-
-            return MapTiles
-                .Values
-                .Where(x => x.HasTree)
-                .Select(y => y.Position);
         }
 
         private static float GeneratePerlinNoise(int row, int column, int seed, float scale)

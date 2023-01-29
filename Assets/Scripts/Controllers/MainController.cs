@@ -28,7 +28,7 @@ namespace Controllers
             _inputService = new InputService();
             _randomService = new RandomService();
             _mapService = new MapService(_randomService);
-            _treeService = new TreeService();
+            _treeService = new TreeService(_randomService);
 
             _cameraController.Init(_inputService);
 
@@ -38,11 +38,11 @@ namespace Controllers
 
         public void UpdateMap(MapSettingsData mapSettingsData)
         {
-            _mapService.UpdateMap(mapSettingsData);
-            _terrainController.UpdateMap(_mapService.MapTiles);
+            _mapService.GenerateMapTiles(mapSettingsData);
+            _treeService.GenerateTrees(_mapService.MapTiles.Values);
 
-            _treeService.GenerateTrees(_mapService.GetTilesWithTreesPositions());
-            _treesController.UpdateTrees(_treeService.TreePositions);
+            _terrainController.UpdateMap(_mapService.MapTiles);
+            _treesController.UpdateTrees(_treeService.Trees);
         }
     }
 }

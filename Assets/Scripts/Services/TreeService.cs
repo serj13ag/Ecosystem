@@ -1,22 +1,66 @@
 ﻿using System.Collections.Generic;
+using Controllers;
 using Data;
+using Enums;
+using Map;
+using UnityEngine;
+using Tree = Map.Tree;
 
 namespace Services
 {
     public class TreeService
     {
-        public HashSet<Point> TreePositions { get; private set; }
+        private readonly RandomService _randomService;
 
-        public TreeService()
+        public List<Tree> Trees { get; }
+
+        public TreeService(RandomService randomService)
         {
-            TreePositions = new HashSet<Point>();
+            _randomService = randomService;
+
+            Trees = new List<Tree>();
         }
 
-        public void GenerateTrees(IEnumerable<Point> mapLandTilePositions)
+        public void GenerateTrees(IEnumerable<Tile> mapTiles)
         {
-            TreePositions.Clear();
+            Trees.Clear();
 
-            TreePositions.UnionWith(mapLandTilePositions);
+            foreach (Tile mapTile in mapTiles)
+            {
+                if (!mapTile.HasTree)
+                {
+                    continue;
+                }
+
+                Point treePosition = mapTile.Position;
+
+                TreeType type = GetTreeType(treePosition);
+                Vector3 position = new Vector3(treePosition.X, Constants.TerrainPositionY, treePosition.Y);
+                int angleRotation = GetRandomRotation(treePosition);
+                Vector3 scale = GetRandomScale(treePosition);
+
+                Tree tree = new Tree(type, position, angleRotation, scale);
+
+                Trees.Add(tree);
+            }
+        }
+
+        private TreeType GetTreeType(Point treePosition)
+        {
+            return (TreeType)_randomService.RandomFunction(treePosition, Constants.TreeTypes.Length);
+        }
+
+        private int GetRandomRotation(Point treePosition)
+        {
+            return _randomService.RandomFunction(treePosition, Constants.TreeMeshMaxRotationAngle);
+        }
+
+        private Vector3 GetRandomScale(Point treePosition)
+        {
+            float randomScale = _randomService.RandomFunction(treePosition, Constants.TreeMeshScaleMinPercentage,
+                Constants.TreeMeshScaleMaxPercentage) / 100f;
+
+            return new Vector3(randomScale, randomScale, randomScale);
         }
     }
 }
