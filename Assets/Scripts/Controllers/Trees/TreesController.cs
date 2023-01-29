@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Enums;
 using Models;
 using UnityEngine;
 using Tree = Map.Tree;
@@ -7,9 +8,9 @@ namespace Controllers.Trees
 {
     public class TreesController : MonoBehaviour
     {
-        [SerializeField] private DrawMeshModel[] _drawMeshModels;
+        [SerializeField] private TreeDrawMeshModel[] _drawMeshModels;
 
-        private List<DrawMeshInstance> _drawMeshInstances;
+        private Dictionary<TreeType, DrawMeshInstance> _drawMeshInstances;
 
         private void Awake()
         {
@@ -26,13 +27,13 @@ namespace Controllers.Trees
             UpdateDrawMeshInstances(trees);
         }
 
-        private List<DrawMeshInstance> CreateDrawMeshInstances()
+        private Dictionary<TreeType, DrawMeshInstance> CreateDrawMeshInstances()
         {
-            var drawMeshInstances = new List<DrawMeshInstance>();
+            var drawMeshInstances = new Dictionary<TreeType, DrawMeshInstance>();
 
-            foreach (DrawMeshModel drawModel in _drawMeshModels)
+            foreach (TreeDrawMeshModel drawModel in _drawMeshModels)
             {
-                drawMeshInstances.Add(new DrawMeshInstance(drawModel));
+                drawMeshInstances.Add(drawModel.TreeType, new DrawMeshInstance(drawModel));
             }
 
             return drawMeshInstances;
@@ -40,7 +41,7 @@ namespace Controllers.Trees
 
         private void RenderDrawMeshInstances()
         {
-            foreach (DrawMeshInstance drawMeshInstance in _drawMeshInstances)
+            foreach (DrawMeshInstance drawMeshInstance in _drawMeshInstances.Values)
             {
                 foreach (List<Matrix4x4> matricesSet in drawMeshInstance.MatricesSets)
                 {
@@ -55,14 +56,14 @@ namespace Controllers.Trees
 
         private void UpdateDrawMeshInstances(IEnumerable<Tree> trees)
         {
-            foreach (DrawMeshInstance drawMeshInstance in _drawMeshInstances)
+            foreach (DrawMeshInstance drawMeshInstance in _drawMeshInstances.Values)
             {
                 drawMeshInstance.ClearMatricesSets();
             }
 
             foreach (Tree tree in trees)
             {
-                _drawMeshInstances[(int)tree.Type].AddMatrix(tree.Position, tree.AngleRotation, tree.Scale);
+                _drawMeshInstances[tree.Type].AddMatrix(tree.Position, tree.AngleRotation, tree.Scale);
             }
         }
     }

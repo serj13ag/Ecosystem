@@ -8,14 +8,14 @@ namespace Controllers.Trees
     {
         private const int DrawMeshInstancedMaxMatricesAmount = 1023;
 
-        private readonly DrawMeshModel _drawModel;
+        private readonly TreeDrawMeshModel _drawModel;
         private readonly List<List<Matrix4x4>> _matricesSets;
 
         public IEnumerable<List<Matrix4x4>> MatricesSets => _matricesSets;
         public Mesh Mesh => _drawModel.Mesh;
         public Material[] SubMeshMaterials => _drawModel.SubMeshMaterials;
 
-        public DrawMeshInstance(DrawMeshModel drawModel)
+        public DrawMeshInstance(TreeDrawMeshModel drawModel)
         {
             _drawModel = drawModel;
 
