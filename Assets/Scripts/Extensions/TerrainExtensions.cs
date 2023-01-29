@@ -37,9 +37,9 @@ namespace Extensions
                 startVertex + mapTile.Position.X,
                 tileHeight,
                 startVertex + mapTile.Position.Y);
-            Vector3 leftTopVertex = leftBottomVertex + Vector3.forward;
-            Vector3 rightTopVertex = leftTopVertex + Vector3.right;
-            Vector3 rightBottomVertex = leftBottomVertex + Vector3.right;
+            Vector3 leftTopVertex = new Vector3(leftBottomVertex.x, leftBottomVertex.y, leftBottomVertex.z + 1);
+            Vector3 rightTopVertex = new Vector3(leftTopVertex.x + 1, leftTopVertex.y, leftTopVertex.z);
+            Vector3 rightBottomVertex = new Vector3(leftBottomVertex.x + 1, leftBottomVertex.y, leftBottomVertex.z);
 
             vertices.Add(leftBottomVertex);
             vertices.Add(leftTopVertex);

@@ -123,16 +123,20 @@ namespace Controllers
 
         private static Point GetNeighbourPosition(Tile mapTile, Point sideDirection)
         {
-            int neighbourPositionX = mapTile.Position.X + sideDirection.X;
-            int neighbourPositionY = mapTile.Position.Y + sideDirection.Y;
+            Point mapTilePosition = mapTile.Position;
+            int neighbourPositionX = mapTilePosition.X + sideDirection.X;
+            int neighbourPositionY = mapTilePosition.Y + sideDirection.Y;
 
             return new Point(neighbourPositionX, neighbourPositionY);
         }
 
         private static bool NeighbourOutOfBounds(Point tilePosition)
         {
-            return tilePosition.X < 0 || tilePosition.X >= Constants.MapSize ||
-                   tilePosition.Y < 0 || tilePosition.Y >= Constants.MapSize;
+            int tilePositionX = tilePosition.X;
+            int tilePositionY = tilePosition.Y;
+
+            return tilePositionX < 0 || tilePositionX >= Constants.MapSize ||
+                   tilePositionY < 0 || tilePositionY >= Constants.MapSize;
         }
 
         private static float GetTileHeight(Tile mapTile)
