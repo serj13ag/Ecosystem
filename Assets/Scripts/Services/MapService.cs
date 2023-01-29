@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Controllers;
 using Data;
 using Map;
 using UnityEngine;
@@ -12,10 +13,14 @@ namespace Services
     {
         private const float HalfMapSize = Constants.MapSize / 2f;
 
+        private readonly RandomService _randomService;
+
         public Dictionary<Point, Tile> MapTiles { get; }
 
-        public MapService()
+        public MapService(RandomService randomService)
         {
+            _randomService = randomService;
+
             MapTiles = new Dictionary<Point, Tile>();
         }
 
@@ -23,7 +28,7 @@ namespace Services
         {
             MapTiles.Clear();
 
-            Random random = new Random(mapSettingsData.Seed);
+            Random random = _randomService.GetNewSeedRandom;
 
             for (var row = 0; row < Constants.MapSize; row++)
             {

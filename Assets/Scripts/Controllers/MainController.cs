@@ -18,6 +18,7 @@ namespace Controllers
 
         private LocalStorageService _localStorageService;
         private InputService _inputService;
+        private RandomService _randomService;
         private MapService _mapService;
         private TreeService _treeService;
 
@@ -25,12 +26,13 @@ namespace Controllers
         {
             _localStorageService = new LocalStorageService();
             _inputService = new InputService();
-            _mapService = new MapService();
+            _randomService = new RandomService();
+            _mapService = new MapService(_randomService);
             _treeService = new TreeService();
 
             _cameraController.Init(_inputService);
 
-            _mapSettingsWindow.Init(this, _localStorageService);
+            _mapSettingsWindow.Init(this, _localStorageService, _randomService);
             _cameraModeWindow.Init(_cameraController);
         }
 
