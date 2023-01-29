@@ -29,7 +29,10 @@ namespace Controllers
             _randomService = new RandomService();
             _mapService = new MapService(_randomService);
             _treeService = new TreeService(_randomService);
+        }
 
+        private void Start()
+        {
             _cameraController.Init(_inputService);
 
             _mapSettingsWindow.Init(this, _localStorageService, _randomService);
