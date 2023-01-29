@@ -4,6 +4,7 @@ using System.Linq;
 using Data;
 using Map;
 using UnityEngine;
+using Random = System.Random;
 
 namespace Services
 {
@@ -22,6 +23,8 @@ namespace Services
         {
             MapTiles.Clear();
 
+            Random random = new Random(mapSettingsData.Seed);
+
             for (var row = 0; row < Constants.MapSize; row++)
             {
                 for (var column = 0; column < Constants.MapSize; column++)
@@ -38,15 +41,16 @@ namespace Services
 
                     bool walkable = tilePerlinHeight > mapSettingsData.WaterLevel;
                     bool suitableForPlants = tilePerlinHeight > mapSettingsData.WaterLevel + Constants.TreesShoreOffset;
+                    bool hasTree = random.Next(100) < mapSettingsData.TreesPercentage && suitableForPlants;
 
                     Point tilePosition = new Point(row, column);
-                    Tile tile = new Tile(tilePosition, tileActualHeight, onBorder, suitableForPlants, walkable);
+                    Tile tile = new Tile(tilePosition, tileActualHeight, onBorder, suitableForPlants, walkable, hasTree);
                     MapTiles.Add(tilePosition, tile);
                 }
             }
         }
 
-        public IEnumerable<Point> GetSuitableForPlantsTilesPositions()
+        public IEnumerable<Point> GetTilesWithTreesPositions()
         {
             if (MapTiles == null)
             {
@@ -55,7 +59,7 @@ namespace Services
 
             return MapTiles
                 .Values
-                .Where(x => x.SuitableForPlants)
+                .Where(x => x.HasTree)
                 .Select(y => y.Position);
         }
 

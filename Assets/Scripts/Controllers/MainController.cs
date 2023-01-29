@@ -21,8 +21,6 @@ namespace Controllers
         private MapService _mapService;
         private TreeService _treeService;
 
-        private bool _mapGenerated;
-
         private void Awake()
         {
             _localStorageService = new LocalStorageService();
@@ -41,19 +39,7 @@ namespace Controllers
             _mapService.UpdateMap(mapSettingsData);
             _terrainController.UpdateMap(_mapService.MapTiles);
 
-            _mapGenerated = true;
-
-            UpdateTrees(mapSettingsData.TreesPercentage);
-        }
-
-        private void UpdateTrees(float treesPercentage)
-        {
-            if (!_mapGenerated)
-            {
-                return;
-            }
-
-            _treeService.GenerateTrees(treesPercentage, _mapService.GetSuitableForPlantsTilesPositions());
+            _treeService.GenerateTrees(_mapService.GetTilesWithTreesPositions());
             _treesController.UpdateTrees(_treeService.TreePositions);
         }
     }

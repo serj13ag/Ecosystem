@@ -2,7 +2,6 @@
 using Data;
 using Models;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Controllers.Trees
 {
@@ -22,7 +21,7 @@ namespace Controllers.Trees
             RenderDrawMeshInstances();
         }
 
-        public void UpdateTrees(HashSet<Point> treePositions)
+        public void UpdateTrees(IEnumerable<Point> treePositions)
         {
             UpdateDrawMeshInstances(treePositions);
         }
@@ -54,7 +53,7 @@ namespace Controllers.Trees
             }
         }
 
-        private void UpdateDrawMeshInstances(HashSet<Point> treePositions)
+        private void UpdateDrawMeshInstances(IEnumerable<Point> treePositions)
         {
             foreach (DrawMeshInstance drawMeshInstance in _drawMeshInstances)
             {
@@ -63,14 +62,15 @@ namespace Controllers.Trees
 
             foreach (Point treePosition in treePositions)
             {
-                Vector3 position = new Vector3(treePosition.X, Constants.TerrainPositionY, treePosition.Y);
-                AddPositionToRandomDrawMeshInstance(position);
+                AddPositionToRandomDrawMeshInstance(treePosition);
             }
         }
 
-        private void AddPositionToRandomDrawMeshInstance(Vector3 position)
+        private void AddPositionToRandomDrawMeshInstance(Point treePosition)
         {
-            int randomInstanceIndex = Random.Range(0, _drawMeshInstances.Count);
+            int randomInstanceIndex = ((treePosition.X ^ 2) + (treePosition.Y ^ 2)) % _drawMeshInstances.Count;
+
+            Vector3 position = new Vector3(treePosition.X, Constants.TerrainPositionY, treePosition.Y);
             _drawMeshInstances[randomInstanceIndex].AddMatrix(position);
         }
     }
