@@ -8,14 +8,14 @@ namespace Controllers.Trees
     {
         private const int DrawMeshInstancedMaxMatricesAmount = 1023;
 
-        private readonly DrawMeshModel _drawModel;
+        private readonly TreeDrawMeshModel _drawModel;
         private readonly List<List<Matrix4x4>> _matricesSets;
 
         public IEnumerable<List<Matrix4x4>> MatricesSets => _matricesSets;
         public Mesh Mesh => _drawModel.Mesh;
         public Material[] SubMeshMaterials => _drawModel.SubMeshMaterials;
 
-        public DrawMeshInstance(DrawMeshModel drawModel)
+        public DrawMeshInstance(TreeDrawMeshModel drawModel)
         {
             _drawModel = drawModel;
 
@@ -31,11 +31,11 @@ namespace Controllers.Trees
             AddNewMatricesSet();
         }
 
-        public void AddMatrix(Vector3 initialPosition)
+        public void AddMatrix(Vector3 initialPosition, int angleRotation, Vector3 scale)
         {
             List<Matrix4x4> matricesSet = _matricesSets[^1];
 
-            Matrix4x4 matrix = CreateTransformMatrix(initialPosition);
+            Matrix4x4 matrix = CreateTransformMatrix(initialPosition, angleRotation, scale);
 
             matricesSet.Add(matrix);
 
@@ -45,15 +45,14 @@ namespace Controllers.Trees
             }
         }
 
-        private Matrix4x4 CreateTransformMatrix(Vector3 initialPosition)
+        private Matrix4x4 CreateTransformMatrix(Vector3 initialPosition, int angleRotation, Vector3 scale)
         {
             Vector3 position = new Vector3(
                 initialPosition.x,
                 initialPosition.y + _drawModel.PivotOffsetY,
                 initialPosition.z);
 
-            Quaternion rotation = GetRandomRotation(_drawModel.Rotation);
-            Vector3 scale = GetRandomScale();
+            Quaternion rotation = GetRotation(_drawModel.Rotation, angleRotation);
 
             return Matrix4x4.TRS(position, rotation, scale);
         }
@@ -63,22 +62,14 @@ namespace Controllers.Trees
             _matricesSets.Add(new List<Matrix4x4>(DrawMeshInstancedMaxMatricesAmount));
         }
 
-        private static Quaternion GetRandomRotation(Vector3 drawModelRotation)
+        private static Quaternion GetRotation(Vector3 drawModelRotation, int angleRotation)
         {
             Quaternion modelRotation = Quaternion.Euler(drawModelRotation);
 
-            int randomAngle = Random.Range(0, Constants.TreeMeshMaxRotationAngle);
             Vector3 modelRotationAxis = modelRotation * Vector3.up;
 
-            modelRotation *= Quaternion.AngleAxis(randomAngle, modelRotationAxis);
+            modelRotation *= Quaternion.AngleAxis(angleRotation, modelRotationAxis);
             return modelRotation;
-        }
-
-        private static Vector3 GetRandomScale()
-        {
-            float randomScale = Random.Range(Constants.TreeMeshScaleMin, Constants.TreeMeshScaleMax);
-
-            return new Vector3(randomScale, randomScale, randomScale);
         }
     }
 }

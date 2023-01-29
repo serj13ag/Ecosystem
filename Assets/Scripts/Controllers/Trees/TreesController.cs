@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
-using Data;
+using Enums;
 using Models;
 using UnityEngine;
-using Random = UnityEngine.Random;
+using Tree = Map.Tree;
 
 namespace Controllers.Trees
 {
     public class TreesController : MonoBehaviour
     {
-        [SerializeField] private DrawMeshModel[] _drawMeshModels;
+        [SerializeField] private TreeDrawMeshModel[] _drawMeshModels;
 
-        private List<DrawMeshInstance> _drawMeshInstances;
+        private Dictionary<TreeType, DrawMeshInstance> _drawMeshInstances;
 
         private void Awake()
         {
@@ -22,18 +22,18 @@ namespace Controllers.Trees
             RenderDrawMeshInstances();
         }
 
-        public void UpdateTrees(HashSet<Point> treePositions)
+        public void UpdateTrees(IEnumerable<Tree> trees)
         {
-            UpdateDrawMeshInstances(treePositions);
+            UpdateDrawMeshInstances(trees);
         }
 
-        private List<DrawMeshInstance> CreateDrawMeshInstances()
+        private Dictionary<TreeType, DrawMeshInstance> CreateDrawMeshInstances()
         {
-            var drawMeshInstances = new List<DrawMeshInstance>();
+            var drawMeshInstances = new Dictionary<TreeType, DrawMeshInstance>();
 
-            foreach (DrawMeshModel drawModel in _drawMeshModels)
+            foreach (TreeDrawMeshModel drawModel in _drawMeshModels)
             {
-                drawMeshInstances.Add(new DrawMeshInstance(drawModel));
+                drawMeshInstances.Add(drawModel.TreeType, new DrawMeshInstance(drawModel));
             }
 
             return drawMeshInstances;
@@ -41,7 +41,7 @@ namespace Controllers.Trees
 
         private void RenderDrawMeshInstances()
         {
-            foreach (DrawMeshInstance drawMeshInstance in _drawMeshInstances)
+            foreach (DrawMeshInstance drawMeshInstance in _drawMeshInstances.Values)
             {
                 foreach (List<Matrix4x4> matricesSet in drawMeshInstance.MatricesSets)
                 {
@@ -54,24 +54,17 @@ namespace Controllers.Trees
             }
         }
 
-        private void UpdateDrawMeshInstances(HashSet<Point> treePositions)
+        private void UpdateDrawMeshInstances(IEnumerable<Tree> trees)
         {
-            foreach (DrawMeshInstance drawMeshInstance in _drawMeshInstances)
+            foreach (DrawMeshInstance drawMeshInstance in _drawMeshInstances.Values)
             {
                 drawMeshInstance.ClearMatricesSets();
             }
 
-            foreach (Point treePosition in treePositions)
+            foreach (Tree tree in trees)
             {
-                Vector3 position = new Vector3(treePosition.X, Constants.TerrainPositionY, treePosition.Y);
-                AddPositionToRandomDrawMeshInstance(position);
+                _drawMeshInstances[tree.Type].AddMatrix(tree.Position, tree.AngleRotation, tree.Scale);
             }
-        }
-
-        private void AddPositionToRandomDrawMeshInstance(Vector3 position)
-        {
-            int randomInstanceIndex = Random.Range(0, _drawMeshInstances.Count);
-            _drawMeshInstances[randomInstanceIndex].AddMatrix(position);
         }
     }
 }

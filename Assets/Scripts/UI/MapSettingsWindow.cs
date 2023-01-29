@@ -22,6 +22,7 @@ namespace UI
 
         private MainController _mainController;
         private LocalStorageService _localStorageService;
+        private RandomService _randomService;
 
         private int _seed;
 
@@ -33,12 +34,16 @@ namespace UI
                 _seed = value;
 
                 _seedInputField.text = value.ToString();
+
+                _randomService.SetMapSeed(value);
             }
         }
 
-        public void Init(MainController mainController, LocalStorageService localStorageService)
+        public void Init(MainController mainController, LocalStorageService localStorageService,
+            RandomService randomService)
         {
             _mainController = mainController;
+            _randomService = randomService;
             _localStorageService = localStorageService;
 
             if (localStorageService.TryLoad(Constants.MapSettingsKey, out MapSettingsData mapSettingsData))

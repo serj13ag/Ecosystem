@@ -10,9 +10,11 @@ namespace Map
 
         public bool SuitableForPlants { get; }
         public bool Walkable { get; }
+        public bool HasTree { get; }
+
         public bool IsShallow { get; }
 
-        public Tile(Point position, float height, bool onBorder, bool suitableForPlants, bool isWalkable)
+        public Tile(Point position, float height, bool onBorder, bool suitableForPlants, bool isWalkable, bool hasTree)
         {
             Position = position;
             Height = height;
@@ -20,6 +22,8 @@ namespace Map
 
             SuitableForPlants = suitableForPlants;
             Walkable = isWalkable;
+            HasTree = hasTree;
+
             IsShallow = height > Constants.ShallowLowerHeight && height < Constants.ShallowHigherHeight;
         }
     }

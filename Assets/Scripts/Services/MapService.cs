@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
+using Controllers;
 using Data;
 using Map;
 using UnityEngine;
+using Random = System.Random;
 
 namespace Services
 {
@@ -11,16 +11,22 @@ namespace Services
     {
         private const float HalfMapSize = Constants.MapSize / 2f;
 
+        private readonly RandomService _randomService;
+
         public Dictionary<Point, Tile> MapTiles { get; }
 
-        public MapService()
+        public MapService(RandomService randomService)
         {
+            _randomService = randomService;
+
             MapTiles = new Dictionary<Point, Tile>();
         }
 
-        public void UpdateMap(MapSettingsData mapSettingsData)
+        public void GenerateMapTiles(MapSettingsData mapSettingsData)
         {
             MapTiles.Clear();
+
+            Random random = _randomService.GetNewSeedRandom;
 
             for (var row = 0; row < Constants.MapSize; row++)
             {
@@ -38,25 +44,14 @@ namespace Services
 
                     bool walkable = tilePerlinHeight > mapSettingsData.WaterLevel;
                     bool suitableForPlants = tilePerlinHeight > mapSettingsData.WaterLevel + Constants.TreesShoreOffset;
+                    bool hasTree = random.Next(100) < mapSettingsData.TreesPercentage && suitableForPlants;
 
                     Point tilePosition = new Point(row, column);
-                    Tile tile = new Tile(tilePosition, tileActualHeight, onBorder, suitableForPlants, walkable);
+                    Tile tile = new Tile(tilePosition, tileActualHeight, onBorder, suitableForPlants, walkable,
+                        hasTree);
                     MapTiles.Add(tilePosition, tile);
                 }
             }
-        }
-
-        public IEnumerable<Point> GetSuitableForPlantsTilesPositions()
-        {
-            if (MapTiles == null)
-            {
-                return Array.Empty<Point>();
-            }
-
-            return MapTiles
-                .Values
-                .Where(x => x.SuitableForPlants)
-                .Select(y => y.Position);
         }
 
         private static float GeneratePerlinNoise(int row, int column, int seed, float scale)

@@ -18,43 +18,31 @@ namespace Controllers
 
         private LocalStorageService _localStorageService;
         private InputService _inputService;
+        private RandomService _randomService;
         private MapService _mapService;
         private TreeService _treeService;
-
-        private bool _mapGenerated;
 
         private void Awake()
         {
             _localStorageService = new LocalStorageService();
             _inputService = new InputService();
-            _mapService = new MapService();
-            _treeService = new TreeService();
+            _randomService = new RandomService();
+            _mapService = new MapService(_randomService);
+            _treeService = new TreeService(_randomService);
 
             _cameraController.Init(_inputService);
 
-            _mapSettingsWindow.Init(this, _localStorageService);
+            _mapSettingsWindow.Init(this, _localStorageService, _randomService);
             _cameraModeWindow.Init(_cameraController);
         }
 
         public void UpdateMap(MapSettingsData mapSettingsData)
         {
-            _mapService.UpdateMap(mapSettingsData);
+            _mapService.GenerateMapTiles(mapSettingsData);
+            _treeService.GenerateTrees(_mapService.MapTiles.Values);
+
             _terrainController.UpdateMap(_mapService.MapTiles);
-
-            _mapGenerated = true;
-
-            UpdateTrees(mapSettingsData.TreesPercentage);
-        }
-
-        private void UpdateTrees(float treesPercentage)
-        {
-            if (!_mapGenerated)
-            {
-                return;
-            }
-
-            _treeService.GenerateTrees(treesPercentage, _mapService.GetSuitableForPlantsTilesPositions());
-            _treesController.UpdateTrees(_treeService.TreePositions);
+            _treesController.UpdateTrees(_treeService.Trees);
         }
     }
 }

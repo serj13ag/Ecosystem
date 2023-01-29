@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Enums;
+using UnityEngine;
 
 public static class Constants
 {
@@ -30,10 +31,12 @@ public static class Constants
     public const float CameraFlySpeed = 30f;
     public const float CameraFlySpeedWithShift = 100f;
 
-    public const float TreeMeshScaleMin = 0.8f;
-    public const float TreeMeshScaleMax = 1.2f;
+    public const int TreeMeshScaleMinPercentage = 80;
+    public const int TreeMeshScaleMaxPercentage = 120;
     public const int TreeMeshMaxRotationAngle = 360;
 
     public static Vector3 CameraInitialPositionRotateMode => new Vector3(-300, 300, -300);
     public static Vector3 CameraInitialPositionFlyMode => new Vector3(-100, 100, -100);
+
+    public static TreeType[] TreeTypes => new[] { TreeType.Maple, TreeType.Pine };
 }
