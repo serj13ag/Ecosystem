@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 
 namespace UI
 {
-    public class MapSettingsWindow : MonoBehaviour
+    public class MapSettingsWindow : BaseWindow
     {
         [SerializeField] private TMP_InputField _seedInputField;
         [SerializeField] private Button _seedRandomize;
@@ -78,11 +78,6 @@ namespace UI
             _next.onClick.AddListener(ShowSimulationSettingsWindow);
         }
 
-        public void Show()
-        {
-            gameObject.SetActive(true);
-        }
-
         private void OnSeedInputValueChanged(string value)
         {
             Seed = Mathf.Min(int.Parse(value), Constants.MaxSeedValue);
@@ -118,11 +113,6 @@ namespace UI
             Hide();
 
             _mainController.ShowSimulationSettingsWindow();
-        }
-
-        private void Hide()
-        {
-            gameObject.SetActive(false);
         }
 
         private MapSettingsData CreateMapSettingsData()

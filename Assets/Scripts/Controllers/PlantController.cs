@@ -10,10 +10,13 @@ namespace Controllers
 
         private List<GameObject> _plants;
 
+        private void Awake()
+        {
+            _plants = new List<GameObject>();
+        }
+
         public void UpdatePlants(HashSet<Point> plantLocations)
         {
-            _plants ??= new List<GameObject>();
-
             ResetPlants();
 
             foreach (Point plantLocation in plantLocations)

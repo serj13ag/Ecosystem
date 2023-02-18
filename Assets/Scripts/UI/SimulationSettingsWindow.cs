@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace UI
 {
-    public class SimulationSettingsWindow : MonoBehaviour
+    public class SimulationSettingsWindow : BaseWindow
     {
         [SerializeField] private Button _back;
         [SerializeField] private Button _generatePlants;
@@ -22,20 +22,10 @@ namespace UI
             _generatePlants.onClick.AddListener(GeneratePlants);
         }
 
-        public void Show()
-        {
-            gameObject.SetActive(true);
-        }
-
         private void ShowMapSettingsWindow()
         {
             Hide();
             _mainController.ShowMapSettingsWindow();
-        }
-
-        private void Hide()
-        {
-            gameObject.SetActive(false);
         }
 
         private void GeneratePlants()
