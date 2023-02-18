@@ -10,6 +10,7 @@ namespace Controllers
     public class MainController : MonoBehaviour
     {
         [SerializeField] private MapSettingsWindow _mapSettingsWindow;
+        [SerializeField] private SimulationSettingsWindow _simulationSettingsWindow;
         [SerializeField] private CameraModeWindow _cameraModeWindow;
 
         [SerializeField] private CameraController _cameraController;
@@ -39,6 +40,7 @@ namespace Controllers
             _cameraController.Init(_inputService);
 
             _mapSettingsWindow.Init(this, _localStorageService, _randomService);
+            _simulationSettingsWindow.Init(this);
             _cameraModeWindow.Init(_cameraController);
         }
 
@@ -55,6 +57,23 @@ namespace Controllers
         {
             _plantService.GeneratePlants(_mapService.MapTiles);
             _plantController.UpdatePlants(_plantService.PlantLocations);
+        }
+
+        public void ShowSimulationSettingsWindow()
+        {
+            _simulationSettingsWindow.Show();
+        }
+
+        public void ShowMapSettingsWindow()
+        {
+            ClearPlants();
+            _mapSettingsWindow.Show();
+        }
+
+        private void ClearPlants()
+        {
+            _plantService.ClearPlants();
+            _plantController.ClearPlants();
         }
     }
 }

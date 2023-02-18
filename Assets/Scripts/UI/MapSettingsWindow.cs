@@ -19,7 +19,7 @@ namespace UI
         [SerializeField] private Slider _treesPercentage;
 
         [SerializeField] private Button _saveMap;
-        [SerializeField] private Button _generatePlants;
+        [SerializeField] private Button _next;
 
         private MainController _mainController;
         private LocalStorageService _localStorageService;
@@ -73,9 +73,14 @@ namespace UI
 
             _treesPercentage.onValueChanged.AddListener(UpdateMap);
 
-            _saveMap.onClick.AddListener(OnSaveMapButtonClick);
+            _saveMap.onClick.AddListener(SaveMapSettingsData);
 
-            _generatePlants.onClick.AddListener(GeneratePlants);
+            _next.onClick.AddListener(ShowSimulationSettingsWindow);
+        }
+
+        public void Show()
+        {
+            gameObject.SetActive(true);
         }
 
         private void OnSeedInputValueChanged(string value)
@@ -92,7 +97,7 @@ namespace UI
             UpdateMap();
         }
 
-        private void OnSaveMapButtonClick()
+        private void SaveMapSettingsData()
         {
             _localStorageService.Save(Constants.MapSettingsKey, CreateMapSettingsData());
         }
@@ -107,9 +112,17 @@ namespace UI
             _mainController.UpdateMap(CreateMapSettingsData());
         }
 
-        private void GeneratePlants()
+        private void ShowSimulationSettingsWindow()
         {
-            _mainController.GeneratePlants();
+            SaveMapSettingsData();
+            Hide();
+
+            _mainController.ShowSimulationSettingsWindow();
+        }
+
+        private void Hide()
+        {
+            gameObject.SetActive(false);
         }
 
         private MapSettingsData CreateMapSettingsData()
@@ -127,9 +140,9 @@ namespace UI
 
             _treesPercentage.onValueChanged.RemoveListener(UpdateMap);
 
-            _saveMap.onClick.RemoveListener(OnSaveMapButtonClick);
+            _saveMap.onClick.RemoveListener(SaveMapSettingsData);
 
-            _generatePlants.onClick.RemoveListener(GeneratePlants);
+            _next.onClick.RemoveListener(ShowSimulationSettingsWindow);
         }
     }
 }

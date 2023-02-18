@@ -14,15 +14,7 @@ namespace Controllers
         {
             _plants ??= new List<GameObject>();
 
-            if (_plants.Count > 0)
-            {
-                foreach (GameObject plant in _plants)
-                {
-                    Destroy(plant);
-                }
-
-                _plants.Clear();
-            }
+            ResetPlants();
 
             foreach (Point plantLocation in plantLocations)
             {
@@ -31,6 +23,26 @@ namespace Controllers
 
                 _plants.Add(plant);
             }
+        }
+
+        public void ClearPlants()
+        {
+            ResetPlants();
+        }
+
+        private void ResetPlants()
+        {
+            if (_plants.Count <= 0)
+            {
+                return;
+            }
+
+            foreach (GameObject plant in _plants)
+            {
+                Destroy(plant);
+            }
+
+            _plants.Clear();
         }
     }
 }

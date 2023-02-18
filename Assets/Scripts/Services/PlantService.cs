@@ -31,5 +31,10 @@ namespace Services
                 }
             }
         }
+
+        public void ClearPlants()
+        {
+            PlantLocations.Clear();
+        }
     }
 }
