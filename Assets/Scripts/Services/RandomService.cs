@@ -7,11 +7,13 @@ namespace Services
     {
         private int _seed;
 
+        public Random SeedRandom { get; private set; }
         public Random GetNewSeedRandom => new Random(_seed);
 
         public void SetMapSeed(int seed)
         {
             _seed = seed;
+            SeedRandom = new Random(seed);
         }
 
         public int RandomFunction(Point additionalSeed, int maxValue)

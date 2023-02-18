@@ -19,6 +19,7 @@ namespace UI
         [SerializeField] private Slider _treesPercentage;
 
         [SerializeField] private Button _saveMap;
+        [SerializeField] private Button _generatePlants;
 
         private MainController _mainController;
         private LocalStorageService _localStorageService;
@@ -73,6 +74,8 @@ namespace UI
             _treesPercentage.onValueChanged.AddListener(UpdateMap);
 
             _saveMap.onClick.AddListener(OnSaveMapButtonClick);
+
+            _generatePlants.onClick.AddListener(GeneratePlants);
         }
 
         private void OnSeedInputValueChanged(string value)
@@ -104,6 +107,11 @@ namespace UI
             _mainController.UpdateMap(CreateMapSettingsData());
         }
 
+        private void GeneratePlants()
+        {
+            _mainController.GeneratePlants();
+        }
+
         private MapSettingsData CreateMapSettingsData()
         {
             return new MapSettingsData(Seed, _scale.value, _waterLevel.value, _treesPercentage.value);
@@ -120,6 +128,8 @@ namespace UI
             _treesPercentage.onValueChanged.RemoveListener(UpdateMap);
 
             _saveMap.onClick.RemoveListener(OnSaveMapButtonClick);
+
+            _generatePlants.onClick.RemoveListener(GeneratePlants);
         }
     }
 }
